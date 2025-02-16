@@ -78,7 +78,7 @@ function drawCards() {
         clearSelections(player.vars, {
             "Color": ["", "Red", "Blue", "Yellow", "Green", "Purple", "Orange", "Black", "White", "Pink", "Brown"],
             "Texture": ["", "Bumpy", "Sharp", "Sticky", "Smooth", "Slippery", "Squishy", "Firm", "Fluffy"],
-            "Taste": ["", "Bitter", "Sour", "Salty", "Savory", "Sweet", "Spicy"],
+            "Taste": ["", "Bitter", "Sour", "Salty", "Umami", "Sweet", "Spicy"],
             "Smell": ["", "Natural", "Neutral", "Pungent", "Chemical"],
             "Volume": ["", "Loud", "Quiet"]
         });
@@ -105,7 +105,7 @@ function createPlayerWindow(playerName) {
     const attributes = {
         "Color": ["", "Red", "Blue", "Yellow", "Green", "Purple", "Orange", "Black", "White", "Pink", "Brown"],
         "Texture": ["", "Bumpy", "Sharp", "Sticky", "Smooth", "Slippery", "Squishy", "Firm", "Fluffy"],
-        "Taste": ["", "Bitter", "Sour", "Salty", "Savory", "Sweet", "Spicy"],
+        "Taste": ["", "Bitter", "Sour", "Salty", "Umami", "Sweet", "Spicy"],
         "Smell": ["", "Natural", "Neutral", "Pungent", "Chemical"],
         "Volume": ["", "Loud", "Quiet"]
     };
@@ -181,6 +181,7 @@ function toggleLock(button, window, playerName) {
     }
     document.getElementById("check-button").disabled = !Object.values(playerData).every(p => p.locked);
     console.log("Final lock status is ", player.locked)
+    console.log("Check button disabled status is ", !Object.values(playerData).every(p => p.locked))
 }
 
 
@@ -237,6 +238,8 @@ function checkMatch() {
 
     // Reset the game state and disable the check button until a new round starts
     document.getElementById("check-button").disabled = true;
+    console.log("Check button disabled status is ", !Object.values(playerData).every(p => p.locked))
+
     //updateMessage("start");
     
 }
