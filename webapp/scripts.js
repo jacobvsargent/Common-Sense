@@ -204,7 +204,7 @@ updateMessage("start");
         }
         player.lockButton.textContent = "Lock In";
     });
-}
+
 
     Object.values(playerData).forEach(player => {
         clearSelections(player.vars, {
