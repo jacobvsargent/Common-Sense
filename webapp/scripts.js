@@ -43,6 +43,12 @@ Papa.parse("common_sense.csv", {
     }
 });
 
+function unlockAllPlayers() {
+    Object.values(playerData).forEach(player => {
+        player.window.classList.remove("locked");
+    });
+}
+
 // Function to update the message box dynamically
 function updateMessage(stage) {
     const messages = {
@@ -73,7 +79,7 @@ function drawCards() {
             "Smell": ["", "Natural", "Neutral", "Pungent", "Chemical"],
             "Volume": ["", "Loud", "Quiet"]
         });
-        player.locked = false;
+        unlockAllPlayers()
     });
     
 }
@@ -211,7 +217,7 @@ function checkMatch() {
     
     // Unlock players and make selections visible again
     Object.values(playerData).forEach(player => {
-        player.locked = false;
+        unlockAllPlayers()
         player.lockButton.textContent = "Lock In";
 
         for (const key in player.vars) {
