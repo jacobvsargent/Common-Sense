@@ -199,6 +199,10 @@ function checkMatch() {
     Object.values(playerData).forEach(player => {
         player.locked = false;
         player.lockButton.textContent = "Lock In";
+
+        for (const key in player.vars) {
+        	player.vars[key].style.display = "block"; // Show selections
+        }
     });
 
     /*
@@ -215,12 +219,12 @@ function checkMatch() {
         });
         player.locked = false;
     });
-    
+    */
 
     // Reset the game state and disable the check button until a new round starts
     document.getElementById("check-button").disabled = true;
     updateMessage("start");
-    */
+    
 }
 
 
