@@ -194,6 +194,7 @@ function checkMatch() {
         }
     });
 
+    /*
     // Unlock players and make selections visible again
     Object.values(playerData).forEach(player => {
         player.locked = false;
@@ -206,7 +207,7 @@ function checkMatch() {
     });
 
     // Clear selections and reset lock state
-    /*
+    
     Object.values(playerData).forEach(player => {
         clearSelections(player.vars, {
             "Color": ["", "Red", "Blue", "Yellow", "Green", "Purple", "Orange", "Black", "White", "Pink", "Brown"],
