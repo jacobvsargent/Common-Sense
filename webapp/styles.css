@@ -1,10 +1,16 @@
 /* Updated with more colors and fun fonts */
 body {
-    font-family: 'Comic Sans MS', cursive, sans-serif;
+    font-family: 'Comic Sans MS', 'Verdana', sans-serif;
     text-align: center;
     margin-top: 50px;
     background: linear-gradient(to right, #ff9a9e, #fad0c4);
     color: #333;
+}
+
+#top-line {
+    font-size: 28px;
+    font-weight: bold;
+    margin: 20px 0;
 }
 
 #result {

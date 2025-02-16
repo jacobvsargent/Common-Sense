@@ -156,10 +156,12 @@ function clearSelections(varsDict, attributes) {
 }
 
 function toggleLock(button, window, playerName) {
+	console.log("Toggling lock for ", playerName)
     if (Object.values(playerData).every(p => p.locked)) {
         updateMessage("locked");
     }
     const player = playerData[playerName];
+    console.log("Initial lock status was ", player.locked)
     player.locked = !player.locked;
     if (player.locked) {
         window.classList.add("locked");
@@ -175,6 +177,7 @@ function toggleLock(button, window, playerName) {
         button.textContent = "Lock In";
     }
     document.getElementById("check-button").disabled = !Object.values(playerData).every(p => p.locked);
+    console.log("Final lock status is ", player.locked)
 }
 
 
