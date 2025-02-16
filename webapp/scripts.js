@@ -46,6 +46,7 @@ Papa.parse("common_sense.csv", {
 function unlockAllPlayers() {
     Object.values(playerData).forEach(player => {
         player.window.classList.remove("locked");
+        player.locked = false;
     });
 }
 
@@ -83,6 +84,8 @@ function drawCards() {
         });
         unlockAllPlayers()
     });
+
+    unlockAllPlayers()
     
 }
 
