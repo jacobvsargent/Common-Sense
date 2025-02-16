@@ -54,7 +54,9 @@ function updateMessage(stage) {
     const messages = {
         start: "Draw cards to start a new round!",
         selecting: "Players, make your selections...",
-        locked: "Click Check to see if you've got Common Sense!"
+        locked: "Click Check to see if you've got Common Sense!",
+        victory: "Now that's some Common Sense!",
+        defeat: "Uh-oh, that's nonsensical!"
     };
     document.getElementById("top-line").textContent = messages[stage];
 }
@@ -185,8 +187,10 @@ function checkMatch() {
     // Update the correct or incorrect guess counter
     if (match) {
         correctGuesses++;
+        updateMessage("victory")
     } else {
         incorrectGuesses++;
+        updateMessage("defeat")
     }
 
     // Update the display for correct/incorrect count
@@ -227,10 +231,9 @@ function checkMatch() {
 
     // Reset the game state and disable the check button until a new round starts
     document.getElementById("check-button").disabled = true;
-    updateMessage("start");
+    //updateMessage("start");
     
 }
-
 
 createPlayerWindow("Player 1");
 createPlayerWindow("Player 2");
