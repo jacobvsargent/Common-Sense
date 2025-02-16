@@ -194,16 +194,11 @@ function checkMatch() {
         }
     });
 
-    /*
+    
     // Unlock players and make selections visible again
     Object.values(playerData).forEach(player => {
         player.locked = false;
         player.lockButton.textContent = "Lock In";
-
-        for (const key in player.vars) {
-            player.vars[key].style.display = "block"; // Show selections
-            player.vars[key].classList.remove("match", "no-match"); // Remove previous shading
-        }
     });
 
     // Clear selections and reset lock state
