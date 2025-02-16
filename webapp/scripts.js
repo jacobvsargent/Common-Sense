@@ -206,6 +206,7 @@ function checkMatch() {
     });
 
     // Clear selections and reset lock state
+    /*
     Object.values(playerData).forEach(player => {
         clearSelections(player.vars, {
             "Color": ["", "Red", "Blue", "Yellow", "Green", "Purple", "Orange", "Black", "White", "Pink", "Brown"],
@@ -216,10 +217,12 @@ function checkMatch() {
         });
         player.locked = false;
     });
+    
 
     // Reset the game state and disable the check button until a new round starts
     document.getElementById("check-button").disabled = true;
     updateMessage("start");
+    */
 }
 
 
