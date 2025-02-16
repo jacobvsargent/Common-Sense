@@ -147,14 +147,6 @@ function toggleLock(button, window, playerName) {
     document.getElementById("check-button").disabled = !Object.values(playerData).every(p => p.locked);
 }
 
-function checkMatch() {
-    const player1Choices = Object.values(playerData["Player 1"].vars).map(select => select.value);
-    const player2Choices = Object.values(playerData["Player 2"].vars).map(select => select.value);
-
-    const match = player1Choices.every((choice, index) => choice === player2Choices[index]);
-
-    const resultLabel = document.getElementById("result");
-
 // Function to update the message box dynamically
 function updateMessage(stage) {
     const messages = {
@@ -164,12 +156,22 @@ function updateMessage(stage) {
     };
     document.getElementById("result").textContent = messages[stage];
 }
-updateMessage("start");
-    if (match) {
-updateMessage("start");
-        correctGuesses++;
-    } else {
-        incorrectGuesses++;
+
+function checkMatch() {
+    const player1Choices = Object.values(playerData["Player 1"].vars).map(select => select.value);
+    const player2Choices = Object.values(playerData["Player 2"].vars).map(select => select.value);
+
+    const match = player1Choices.every((choice, index) => choice === player2Choices[index]);
+
+    const resultLabel = document.getElementById("result");
+
+
+	updateMessage("start");
+	    if (match) {
+	updateMessage("start");
+	        correctGuesses++;
+	    } else {
+	        incorrectGuesses++;
     }
 
     document.getElementById("correct-label").textContent = `Correct: ${correctGuesses}`;
