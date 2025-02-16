@@ -162,17 +162,14 @@ function checkMatch() {
 
     const match = player1Choices.every((choice, index) => choice === player2Choices[index]);
 
-    const resultLabel = document.getElementById("result");
-
-
-	updateMessage("start");
-	    if (match) {
-	updateMessage("start");
-	        correctGuesses++;
-	    } else {
-	        incorrectGuesses++;
+    // Update the correct or incorrect guess counter
+    if (match) {
+        correctGuesses++;
+    } else {
+        incorrectGuesses++;
     }
 
+    // Update the display for correct/incorrect count
     document.getElementById("correct-label").textContent = `Correct: ${correctGuesses}`;
     document.getElementById("incorrect-label").textContent = `Incorrect: ${incorrectGuesses}`;
 
@@ -200,13 +197,15 @@ function checkMatch() {
     // Unlock players and make selections visible again
     Object.values(playerData).forEach(player => {
         player.locked = false;
+        player.lockButton.textContent = "Lock In";
+
         for (const key in player.vars) {
             player.vars[key].style.display = "block"; // Show selections
+            player.vars[key].classList.remove("match", "no-match"); // Remove previous shading
         }
-        player.lockButton.textContent = "Lock In";
     });
 
-
+    // Clear selections and reset lock state
     Object.values(playerData).forEach(player => {
         clearSelections(player.vars, {
             "Color": ["", "Red", "Blue", "Yellow", "Green", "Purple", "Orange", "Black", "White", "Pink", "Brown"],
@@ -216,14 +215,13 @@ function checkMatch() {
             "Volume": ["", "Loud", "Quiet"]
         });
         player.locked = false;
-        for (const key in player.vars) {
-            player.vars[key].style.display = "block"; // Show selections
-            player.vars[key].classList.remove("match", "no-match"); // Remove shading
-        }
-        player.lockButton.textContent = "Lock In";
     });
+
+    // Reset the game state and disable the check button until a new round starts
     document.getElementById("check-button").disabled = true;
+    updateMessage("start");
 }
+
 
 createPlayerWindow("Player 1");
 createPlayerWindow("Player 2");
