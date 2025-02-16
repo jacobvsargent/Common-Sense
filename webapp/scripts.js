@@ -46,10 +46,10 @@ Papa.parse("common_sense.csv", {
 
 
 function drawCards() {
+    updateMessage("selecting");
     if (category.length && modifier.length && object.length) {
         const result = document.getElementById("result");
         result.textContent = `${randomChoice(category)} ${randomChoice(modifier)} ${randomChoice(object)}`;
-        resetPlayers();
     } else {
         console.error("CSV data has not been loaded yet.");
         alert("Data not loaded yet. Please wait a moment and try again.");
@@ -126,6 +126,9 @@ function clearSelections(varsDict, attributes) {
 }
 
 function toggleLock(button, window, playerName) {
+    if (Object.values(playerData).every(p => p.locked)) {
+        updateMessage("locked");
+    }
     const player = playerData[playerName];
     player.locked = !player.locked;
     if (player.locked) {
@@ -151,11 +154,21 @@ function checkMatch() {
     const match = player1Choices.every((choice, index) => choice === player2Choices[index]);
 
     const resultLabel = document.getElementById("result");
+
+// Function to update the message box dynamically
+function updateMessage(stage) {
+    const messages = {
+        start: "Draw cards to start a new round!",
+        selecting: "Players, make your selections...",
+        locked: "Click Check to see if you've got Common Sense!"
+    };
+    document.getElementById("result").textContent = messages[stage];
+}
+updateMessage("start");
     if (match) {
-        resultLabel.textContent = "Now that's some Common Sense!";
+updateMessage("start");
         correctGuesses++;
     } else {
-        resultLabel.textContent = "Uh-oh, that's non-sensical!";
         incorrectGuesses++;
     }
 
@@ -193,7 +206,6 @@ function checkMatch() {
     });
 }
 
-function resetPlayers() {
     Object.values(playerData).forEach(player => {
         clearSelections(player.vars, {
             "Color": ["", "Red", "Blue", "Yellow", "Green", "Purple", "Orange", "Black", "White", "Pink", "Brown"],
