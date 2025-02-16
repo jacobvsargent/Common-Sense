@@ -43,7 +43,15 @@ Papa.parse("common_sense.csv", {
     }
 });
 
-
+// Function to update the message box dynamically
+function updateMessage(stage) {
+    const messages = {
+        start: "Draw cards to start a new round!",
+        selecting: "Players, make your selections...",
+        locked: "Click Check to see if you've got Common Sense!"
+    };
+    document.getElementById("result").textContent = messages[stage];
+}
 
 function drawCards() {
     updateMessage("selecting");
@@ -147,15 +155,6 @@ function toggleLock(button, window, playerName) {
     document.getElementById("check-button").disabled = !Object.values(playerData).every(p => p.locked);
 }
 
-// Function to update the message box dynamically
-function updateMessage(stage) {
-    const messages = {
-        start: "Draw cards to start a new round!",
-        selecting: "Players, make your selections...",
-        locked: "Click Check to see if you've got Common Sense!"
-    };
-    document.getElementById("result").textContent = messages[stage];
-}
 
 function checkMatch() {
     const player1Choices = Object.values(playerData["Player 1"].vars).map(select => select.value);
