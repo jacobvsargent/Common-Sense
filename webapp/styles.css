@@ -45,8 +45,9 @@ button:hover {
     color: white;
 }
 
-.disabled {
+#check-button:disabled {
     background-color: lightgrey;
+    color: white;
 }
 
 .player-window {
