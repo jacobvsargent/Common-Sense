@@ -62,6 +62,20 @@ function drawCards() {
         console.error("CSV data has not been loaded yet.");
         alert("Data not loaded yet. Please wait a moment and try again.");
     }
+
+
+    // Clear selections and reset lock state
+    Object.values(playerData).forEach(player => {
+        clearSelections(player.vars, {
+            "Color": ["", "Red", "Blue", "Yellow", "Green", "Purple", "Orange", "Black", "White", "Pink", "Brown"],
+            "Texture": ["", "Bumpy", "Sharp", "Sticky", "Smooth", "Slippery", "Squishy", "Firm", "Fluffy"],
+            "Taste": ["", "Bitter", "Sour", "Salty", "Savory", "Sweet", "Spicy"],
+            "Smell": ["", "Natural", "Neutral", "Pungent", "Chemical"],
+            "Volume": ["", "Loud", "Quiet"]
+        });
+        player.locked = false;
+    });
+    
 }
 
 function randomChoice(arr) {
@@ -204,22 +218,6 @@ function checkMatch() {
         	player.vars[key].style.display = "block"; // Show selections
         }
     });
-
-    /*
-
-    // Clear selections and reset lock state
-    
-    Object.values(playerData).forEach(player => {
-        clearSelections(player.vars, {
-            "Color": ["", "Red", "Blue", "Yellow", "Green", "Purple", "Orange", "Black", "White", "Pink", "Brown"],
-            "Texture": ["", "Bumpy", "Sharp", "Sticky", "Smooth", "Slippery", "Squishy", "Firm", "Fluffy"],
-            "Taste": ["", "Bitter", "Sour", "Salty", "Savory", "Sweet", "Spicy"],
-            "Smell": ["", "Natural", "Neutral", "Pungent", "Chemical"],
-            "Volume": ["", "Loud", "Quiet"]
-        });
-        player.locked = false;
-    });
-    */
 
     // Reset the game state and disable the check button until a new round starts
     document.getElementById("check-button").disabled = true;
