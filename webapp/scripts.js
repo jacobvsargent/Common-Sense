@@ -56,7 +56,7 @@ function updateMessage(stage) {
         selecting: "Players, make your selections...",
         locked: "Click Check to see if you've got Common Sense!"
     };
-    document.getElementById("result").textContent = messages[stage];
+    document.getElementById("top-line").textContent = messages[stage];
 }
 
 function drawCards() {
