@@ -170,12 +170,20 @@ function toggleLock(button, window, playerName) {
         window.classList.add("locked");
         for (const key in player.vars) {
             player.vars[key].style.display = "none"; // Hide selections
+            const label = player.vars[key].previousElementSibling;
+   			if (label && label.tagName === "LABEL") {
+        		label.style.display = "none";
+    		}
         }
         button.textContent = "Locked In!";
     } else {
         window.classList.remove("locked");
         for (const key in player.vars) {
             player.vars[key].style.display = "block"; // Show selections
+            const label = player.vars[key].previousElementSibling;
+		    if (label && label.tagName === "LABEL") {
+		        label.style.display = "block";
+		    }
         }
         button.textContent = "Lock In";
     }
@@ -233,6 +241,10 @@ function checkMatch() {
 
         for (const key in player.vars) {
         	player.vars[key].style.display = "block"; // Show selections
+        	const label = player.vars[key].previousElementSibling;
+		    if (label && label.tagName === "LABEL") {
+		        label.style.display = "block";
+		    }
         }
     });
 
