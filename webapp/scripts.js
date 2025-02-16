@@ -201,6 +201,8 @@ function checkMatch() {
         player.lockButton.textContent = "Lock In";
     });
 
+    /*
+
     // Clear selections and reset lock state
     
     Object.values(playerData).forEach(player => {
