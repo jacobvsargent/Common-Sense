@@ -56,9 +56,16 @@ button:hover {
     padding: 15px;
     display: inline-block;
     vertical-align: top;
-    width: 55%;
+    width: 45%;
     background: #fff3cd;
     border-radius: 10px;
+}
+
+/* Apply 55% width ONLY for mobile screens */
+@media (max-width: 768px) { 
+    .player-window {
+        width: 60%;
+    }
 }
 
 .locked {
