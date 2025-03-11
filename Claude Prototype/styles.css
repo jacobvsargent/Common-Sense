@@ -1,0 +1,269 @@
+/* Enhanced styles for Common Sense game */
+body {
+    font-family: 'Comic Sans MS', 'Verdana', sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 20px;
+    background: linear-gradient(to right, #ff9a9e, #fad0c4);
+    color: #333;
+}
+
+#top-line {
+    font-size: 28px;
+    font-weight: bold;
+    margin: 20px 0;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+#result {
+    font-size: 28px;
+    font-weight: bold;
+    margin: 20px 0;
+    color: #4A90E2;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+button {
+    margin: 10px;
+    padding: 12px 24px;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    transition: all 0.3s;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+button:disabled {
+    opacity: 0.5;
+    transform: none;
+    cursor: not-allowed;
+}
+
+#draw-cards-button {
+    background-color: #ffcc00;
+    color: #333;
+}
+
+#check-button {
+    background-color: #66cc66;
+    color: white;
+}
+
+#check-button:disabled {
+    background-color: #aaaaaa;
+    color: white;
+}
+
+.lock-button {
+    background-color: #4A90E2;
+    color: white;
+}
+
+.clear-button {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.player-window {
+    border: 2px solid #666;
+    margin: 10px;
+    padding: 15px;
+    display: inline-block;
+    vertical-align: top;
+    width: 45%;
+    background: #fff3cd;
+    border-radius: 10px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.player-window h2 {
+    margin-top: 0;
+    color: #333;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+}
+
+/* Apply 60% width ONLY for mobile */
+@media (max-width: 768px) { 
+    .player-window {
+        width: 90%;
+    }
+    
+    #controls-area, #stats-area, #mode-selector {
+        flex-direction: column;
+    }
+}
+
+.locked {
+    background-color: #e0e0e0;
+    color: #555;
+    font-weight: bold;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.grid-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    font-weight: bold;
+}
+
+label {
+    margin-bottom: 5px;
+    font-size: 18px;
+    color: #444;
+}
+
+select {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    width: 100%;
+}
+
+.match {
+    background-color: #66ff66;
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
+    padding: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.no-match {
+    background-color: #ff6666;
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
+    padding: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.player-score {
+    margin-top: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #4A90E2;
+}
+
+#correct-label, #incorrect-label, #match-percentage, #round-counter {
+    display: inline-block;
+    margin: 10px;
+    padding: 8px 15px;
+    font-weight: bold;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#correct-label {
+    color: #66cc66;
+}
+
+#incorrect-label {
+    color: #e74c3c;
+}
+
+#controls-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 15px 0;
+}
+
+#mode-selector {
+    display: flex;
+    align-items: center;
+    margin: 10px;
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 10px;
+    border-radius: 10px;
+}
+
+#mode-selector h3 {
+    margin: 0 10px 0 0;
+}
+
+.mode-button {
+    margin: 0 5px;
+    padding: 8px 15px;
+    font-size: 16px;
+}
+
+.active-mode {
+    background-color: #4A90E2;
+    color: white;
+}
+
+#stats-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+#history-panel {
+    width: 80%;
+    margin: 20px auto;
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#history-panel h3 {
+    margin-top: 0;
+}
+
+#history-list {
+    max-height: 200px;
+    overflow-y: auto;
+    text-align: left;
+}
+
+.history-item {
+    padding: 8px;
+    margin: 5px 0;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+}
+
+.result-icon {
+    margin-right: 10px;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+#footer {
+    margin-top: 30px;
+    font-size: 14px;
+    color: #666;
+}
