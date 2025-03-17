@@ -710,6 +710,159 @@ function setupGameUI() {
     document.getElementById("draw-cards-button").disabled = true;
 }
 
+// Add these functions to updated-scripts.js
+
+function setupGameUI() {
+    // Create game mode selector
+    const modeSelector = document.createElement("div");
+    modeSelector.id = "mode-selector";
+    modeSelector.innerHTML = `
+        <h3>Game Mode:</h3>
+        <button class="mode-button active-mode" data-mode="standard" onclick="setGameMode('standard')">Standard</button>
+        <button class="mode-button" data-mode="timed" onclick="setGameMode('timed')">Timed (30s)</button>
+        <button class="mode-button" data-mode="streak" onclick="setGameMode('streak')">Streak</button>
+        <button class="mode-button" data-mode="describe" onclick="setGameMode('describe')">Describe</button>
+    `;
+    
+    // Create stats area
+    const statsArea = document.createElement("div");
+    statsArea.id = "stats-area";
+    statsArea.innerHTML = `
+        <div id="round-counter">Round: 0</div>
+        <div id="match-percentage">Match Rate: 0%</div>
+    `;
+    
+    // Create history panel
+    const historyPanel = document.createElement("div");
+    historyPanel.id = "history-panel";
+    historyPanel.innerHTML = `
+        <h3>History</h3>
+        <div id="history-list"></div>
+    `;
+    
+    // Create instructions panel
+    const instructionsPanel = document.createElement("div");
+    instructionsPanel.id = "instructions-panel";
+    instructionsPanel.innerHTML = `
+        <h3>How to Play</h3>
+        <div id="instructions-content"></div>
+    `;
+    
+    // Insert elements into DOM
+    const controlsArea = document.createElement("div");
+    controlsArea.id = "controls-area";
+    
+    document.body.insertBefore(controlsArea, document.getElementById("players"));
+    controlsArea.appendChild(modeSelector);
+    controlsArea.appendChild(statsArea);
+    document.body.insertBefore(historyPanel, document.getElementById("footer"));
+    document.body.insertBefore(instructionsPanel, document.getElementById("footer"));
+    
+    // Initially disable draw button until data is loaded
+    document.getElementById("draw-cards-button").disabled = true;
+    
+    // Set initial instructions
+    updateInstructions("standard");
+}
+
+function updateInstructions(mode) {
+    const instructionsContent = document.getElementById("instructions-content");
+    
+    const instructions = {
+        standard: `
+            <p>In Standard mode, both players try to create "Common Sense" by matching attribute selections.</p>
+            <ul>
+                <li>Each round shows a random item combining a Category, Modifier, and Object.</li>
+                <li>Both players independently select attributes (Color, Texture, etc.) they think match the item.</li>
+                <li>Once both players "Lock In" their choices, click "Check" to see if you matched.</li>
+                <li>If all non-empty attributes match, you get a point for Common Sense!</li>
+                <li>Take turns and see how many you can get right.</li>
+            </ul>
+        `,
+        timed: `
+            <p>In Timed mode, you play against the clock!</p>
+            <ul>
+                <li>Same rules as Standard mode, but you only have 30 seconds to make your selections.</li>
+                <li>If time runs out before you lock in, your current selections are automatically submitted.</li>
+                <li>Think fast and build your Common Sense under pressure!</li>
+                <li>Both players must make their choices quickly to beat the timer.</li>
+            </ul>
+        `,
+        streak: `
+            <p>In Streak mode, try to build the longest streak of correct matches!</p>
+            <ul>
+                <li>Same rules as Standard mode, but your streak resets to zero if you get a mismatch.</li>
+                <li>Your highest streak is tracked as your high score.</li>
+                <li>Challenge yourselves to beat your previous best streak.</li>
+                <li>Careful consideration of each choice becomes essential!</li>
+            </ul>
+        `,
+        describe: `
+            <p>In Describe mode, players take turns describing and guessing objects.</p>
+            <ul>
+                <li>One player sees a random object and must describe it using attributes.</li>
+                <li>After locking in attributes, the other player sees the description.</li>
+                <li>The guessing player must select the correct object from multiple choices.</li>
+                <li>Both players get a point if the guess is correct.</li>
+                <li>Players alternate roles with each new round.</li>
+            </ul>
+        `
+    };
+    
+    instructionsContent.innerHTML = instructions[mode];
+}
+
+function setGameMode(mode) {
+    gameMode = mode;
+    
+    // Reset game stats
+    currentRound = 0;
+    correctGuesses = 0;
+    incorrectGuesses = 0;
+    streakCount = 0;
+    document.getElementById("correct-label").textContent = "Correct: 0";
+    document.getElementById("incorrect-label").textContent = "Incorrect: 0";
+    document.getElementById("match-percentage").textContent = "Match Rate: 0%";
+    document.getElementById("round-counter").textContent = "Round: 0";
+    
+    // Clear history
+    document.getElementById("history-list").innerHTML = "";
+    
+    // Reset player scores
+    Object.keys(playerData).forEach(playerName => {
+        playerData[playerName].score = 0;
+        updatePlayerScore(playerName, false);
+    });
+    
+    // Update UI based on mode
+    const modeButtons = document.querySelectorAll(".mode-button");
+    modeButtons.forEach(button => {
+        button.classList.remove("active-mode");
+        if (button.getAttribute("data-mode") === mode) {
+            button.classList.add("active-mode");
+        }
+    });
+    
+    // For Describe mode, hide the check button as it's not needed
+    document.getElementById("check-button").style.display = mode === "describe" ? "none" : "inline-block";
+    
+    // Clear any object selection area
+    if (document.getElementById("object-selection-area")) {
+        document.getElementById("object-selection-area").innerHTML = "";
+        document.getElementById("object-selection-area").style.display = "none";
+    }
+    
+    // Update message based on mode
+    if (mode === "streak") {
+        updateMessage("streak");
+    } else {
+        updateMessage("ready");
+    }
+    
+    // Update instructions for the selected mode
+    updateInstructions(mode);
+}
+
 // Initialize game
 function initGame() {
     createPlayerWindow("Player 1");
