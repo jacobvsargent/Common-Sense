@@ -89,6 +89,7 @@ function getOtherPlayer(playerName) {
     return playerName === "Player 1" ? "Player 2" : "Player 1";
 }
 
+// Update the drawCards function to filter attributes
 function drawCards() {
     if (!dataLoaded) {
         alert("Data not loaded yet. Please wait a moment and try again.");
@@ -108,12 +109,36 @@ function drawCards() {
     // Handle different game modes
     if (gameMode === "describe") {
         setupDescribeMode();
+        // All attributes stay visible in describe mode
     } else {
         updateMessage("selecting");
         
         if (category.length && modifier.length && object.length) {
+            const questionText = `${randomChoice(category)} ${randomChoice(modifier)} ${randomChoice(object)}`;
             const result = document.getElementById("result");
-            result.textContent = `${randomChoice(category)} ${randomChoice(modifier)} ${randomChoice(object)}`;
+            result.textContent = questionText;
+            
+            // For standard, timed, and streak modes, filter attributes based on the question
+            const mentionedAttributes = getAttributesFromQuestion(questionText);
+            console.log("Mentioned attributes:", mentionedAttributes);
+            
+            // Show/hide attributes based on what's mentioned in the question
+            Object.values(playerData).forEach(player => {
+                for (const attrName in player.vars) {
+                    const selectElement = player.vars[attrName];
+                    const labelElement = selectElement.previousElementSibling;
+                    const gridItem = selectElement.parentElement;
+                    
+                    if (mentionedAttributes.includes(attrName)) {
+                        // Show this attribute
+                        gridItem.style.display = "flex";
+                    } else {
+                        // Hide this attribute and reset its value
+                        gridItem.style.display = "none";
+                        selectElement.value = "";
+                    }
+                }
+            });
         }
     }
 
@@ -485,20 +510,62 @@ function updatePlayerScore(playerName, increment) {
     document.getElementById(`${playerName.replace(" ", "-")}-score`).textContent = `${playerName} Score: ${player.score}`;
 }
 
+// Update the checkMatch function to only check relevant attributes
 function checkMatch() {
     // Clear any active timer
     if (roundTimer) {
         clearInterval(roundTimer);
     }
     
-    const player1Choices = Object.values(playerData["Player 1"].vars).map(select => select.value);
-    const player2Choices = Object.values(playerData["Player 2"].vars).map(select => select.value);
+    // Get the question text
+    const questionText = document.getElementById("result").textContent;
+    
+    // Get the attributes that should be considered for matching
+    const relevantAttributes = gameMode === "describe" ? 
+        Object.keys(playerData["Player 1"].vars) : // In describe mode, check all attributes
+        getAttributesFromQuestion(questionText); // In other modes, only check mentioned attributes
+    
+    // Check if the relevant attributes match between players
+    let allMatch = true;
+    let nonEmptyCount = 0;
+    
+    // Check each relevant attribute
+    for (const attrName of relevantAttributes) {
+        const p1Value = playerData["Player 1"].vars[attrName].value;
+        const p2Value = playerData["Player 2"].vars[attrName].value;
+        
+        // Skip empty values
+        if (p1Value === "" && p2Value === "") continue;
+        
+        // Count non-empty selections
+        if (p1Value !== "" || p2Value !== "") nonEmptyCount++;
+        
+        // Check for match
+        if (p1Value !== p2Value) {
+            allMatch = false;
+        }
+        
+        // Apply CSS classes for visual feedback
+        if (p1Value === "" || p2Value === "") {
+            playerData["Player 1"].vars[attrName].classList.remove("match", "no-match");
+            playerData["Player 2"].vars[attrName].classList.remove("match", "no-match");
+        } else if (p1Value === p2Value) {
+            playerData["Player 1"].vars[attrName].classList.add("match");
+            playerData["Player 2"].vars[attrName].classList.add("match");
+            playerData["Player 1"].vars[attrName].classList.remove("no-match");
+            playerData["Player 2"].vars[attrName].classList.remove("no-match");
+        } else {
+            playerData["Player 1"].vars[attrName].classList.add("no-match");
+            playerData["Player 2"].vars[attrName].classList.add("no-match");
+            playerData["Player 1"].vars[attrName].classList.remove("match");
+            playerData["Player 2"].vars[attrName].classList.remove("match");
+        }
+    }
 
-    const match = player1Choices.every((choice, index) => choice === player2Choices[index]);
-    const nonEmptyChoices = player1Choices.filter(choice => choice !== "").length;
+    const match = allMatch && nonEmptyCount > 0;
 
     // Update the correct or incorrect guess counter
-    if (match && nonEmptyChoices > 0) {
+    if (match) {
         correctGuesses++;
         updateMessage("victory");
         
@@ -540,27 +607,6 @@ function checkMatch() {
     const matchPercentage = totalGuesses > 0 ? Math.round((correctGuesses / totalGuesses) * 100) : 0;
     document.getElementById("match-percentage").textContent = `Match Rate: ${matchPercentage}%`;
     
-    // Apply shading based on match
-    Object.keys(playerData["Player 1"].vars).forEach(key => {
-        const p1Value = playerData["Player 1"].vars[key].value;
-        const p2Value = playerData["Player 2"].vars[key].value;
-
-        if (p1Value === "" || p2Value === "") {
-            playerData["Player 1"].vars[key].classList.remove("match", "no-match");
-            playerData["Player 2"].vars[key].classList.remove("match", "no-match");
-        } else if (p1Value === p2Value) {
-            playerData["Player 1"].vars[key].classList.add("match");
-            playerData["Player 2"].vars[key].classList.add("match");
-            playerData["Player 1"].vars[key].classList.remove("no-match");
-            playerData["Player 2"].vars[key].classList.remove("no-match");
-        } else {
-            playerData["Player 1"].vars[key].classList.add("no-match");
-            playerData["Player 2"].vars[key].classList.add("no-match");
-            playerData["Player 1"].vars[key].classList.remove("match");
-            playerData["Player 2"].vars[key].classList.remove("match");
-        }
-    });
-
     // Unlock players and make selections visible again
     Object.values(playerData).forEach(player => {
         player.locked = false;
@@ -568,10 +614,16 @@ function checkMatch() {
         player.lockButton.textContent = "Lock In";
 
         for (const key in player.vars) {
-            player.vars[key].style.display = "block";
-            const label = player.vars[key].previousElementSibling;
-            if (label && label.tagName === "LABEL") {
-                label.style.display = "block";
+            const selectElement = player.vars[key];
+            const gridItem = selectElement.parentElement;
+            
+            // Only show elements that were previously visible
+            if (gameMode === "describe" || relevantAttributes.includes(key)) {
+                selectElement.style.display = "block";
+                const label = selectElement.previousElementSibling;
+                if (label && label.tagName === "LABEL") {
+                    label.style.display = "block";
+                }
             }
         }
     });
@@ -659,6 +711,7 @@ function addToHistory(question, matched) {
     }
 }
 
+// Update the playSound function to lower volume
 function playSound(type) {
     const audio = new Audio();
     if (type === "success") {
@@ -666,6 +719,8 @@ function playSound(type) {
     } else if (type === "failure") {
         audio.src = "https://soundbible.com/grab.php?id=1204&type=mp3"; // Failure sound
     }
+    // Set volume to 30% of maximum (0.3)
+    audio.volume = 0.3;
     audio.play().catch(e => console.warn("Audio playback not allowed:", e));
 }
 
@@ -860,6 +915,35 @@ function setGameMode(mode) {
     // Update instructions for the selected mode
     updateInstructions(mode);
 }
+
+// Add this function to parse the question and identify mentioned attributes
+function getAttributesFromQuestion(questionText) {
+    // Convert question text to uppercase for case-insensitive matching
+    const upperQuestion = questionText.toUpperCase();
+    
+    // Define attributes to look for and their possible variations in the question
+    const attributeKeywords = {
+        "Color": ["COLOR", "RED", "BLUE", "YELLOW", "GREEN", "PURPLE", "ORANGE", "BLACK", "WHITE", "PINK", "BROWN"],
+        "Texture": ["TEXTURE", "BUMPY", "SHARP", "STICKY", "SMOOTH", "SLIPPERY", "SQUISHY", "FIRM", "FLUFFY"],
+        "Taste": ["TASTE", "BITTER", "SOUR", "SALTY", "UMAMI", "SWEET", "SPICY"],
+        "Smell": ["SMELL", "NATURAL", "NEUTRAL", "PUNGENT", "CHEMICAL"],
+        "Volume": ["VOLUME", "LOUD", "QUIET"]
+    };
+    
+    // Find which attributes are mentioned in the question
+    const mentionedAttributes = [];
+    for (const [attribute, keywords] of Object.entries(attributeKeywords)) {
+        for (const keyword of keywords) {
+            if (upperQuestion.includes(keyword)) {
+                mentionedAttributes.push(attribute);
+                break; // Found a match for this attribute, move to next attribute
+            }
+        }
+    }
+    
+    return mentionedAttributes;
+}
+
 
 // Initialize game
 function initGame() {

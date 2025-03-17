@@ -1,0 +1,3 @@
+- turn down the volume
+- make it so attributes only show up when necessary
+- fix describe mode bug
