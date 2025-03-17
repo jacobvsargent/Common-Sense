@@ -772,10 +772,10 @@ function updateInstructions(mode) {
         standard: `
             <p>In Standard mode, both players try to create "Common Sense" by matching attribute selections.</p>
             <ul>
-                <li>Each round shows a random item combining a Category, Modifier, and Object.</li>
-                <li>Both players independently select attributes (Color, Texture, etc.) they think match the item.</li>
+                <li>Press "Draw Cards" to get a question from the game.</li>
+                <li>Both players independently answer with the attributes (Color, Texture, etc.) they think match the item.</li>
                 <li>Once both players "Lock In" their choices, click "Check" to see if you matched.</li>
-                <li>If all non-empty attributes match, you get a point for Common Sense!</li>
+                <li>If all attributes match, you get a point for Common Sense!</li>
                 <li>Take turns and see how many you can get right.</li>
             </ul>
         `,
@@ -785,7 +785,6 @@ function updateInstructions(mode) {
                 <li>Same rules as Standard mode, but you only have 30 seconds to make your selections.</li>
                 <li>If time runs out before you lock in, your current selections are automatically submitted.</li>
                 <li>Think fast and build your Common Sense under pressure!</li>
-                <li>Both players must make their choices quickly to beat the timer.</li>
             </ul>
         `,
         streak: `
@@ -794,16 +793,15 @@ function updateInstructions(mode) {
                 <li>Same rules as Standard mode, but your streak resets to zero if you get a mismatch.</li>
                 <li>Your highest streak is tracked as your high score.</li>
                 <li>Challenge yourselves to beat your previous best streak.</li>
-                <li>Careful consideration of each choice becomes essential!</li>
             </ul>
         `,
         describe: `
             <p>In Describe mode, players take turns describing and guessing objects.</p>
             <ul>
                 <li>One player sees a random object and must describe it using attributes.</li>
+                <li>Use as many or as few attributes as you want. Challenge yourself!</li>
                 <li>After locking in attributes, the other player sees the description.</li>
                 <li>The guessing player must select the correct object from multiple choices.</li>
-                <li>Both players get a point if the guess is correct.</li>
                 <li>Players alternate roles with each new round.</li>
             </ul>
         `
