@@ -76,11 +76,11 @@ async function loadCommonSenseData() {
       };
       
       // Sort into appropriate category based on deck value
-      if (record.deck.startsWith('1 -')) {
+      if (record.deck.startsWith('1')) {
         data.categories.push(item);
-      } else if (record.deck.startsWith('2-')) {
+      } else if (record.deck.startsWith('2')) {
         data.modifiers.push(item);
-      } else if (record.deck.startsWith('3-')) {
+      } else if (record.deck.startsWith('3')) {
         data.objects.push(item);
       }
     });
