@@ -1,0 +1,274 @@
+/* Base Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background-color: #f0f5ff;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+h1 {
+  font-size: 2.5rem;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+h2 {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  color: #3498db;
+}
+
+h3 {
+  font-size: 1.3rem;
+  margin-bottom: 15px;
+  color: #2980b9;
+}
+
+.btn-primary {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 1.1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: inline-block;
+  margin: 10px 0;
+}
+
+.btn-primary:hover {
+  background-color: #2980b9;
+}
+
+.btn-primary.disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.highlight {
+  font-weight: bold;
+  color: #e74c3c;
+}
+
+.error {
+  color: #e74c3c;
+  margin: 10px 0;
+}
+
+/* Host Specific Styles */
+.host #room-display {
+  text-align: center;
+  margin: 30px 0;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.host #room-code {
+  font-size: 2.5rem;
+  letter-spacing: 5px;
+}
+
+.host #player-list {
+  margin: 20px 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.host .player-item {
+  background-color: #3498db;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: bold;
+}
+
+.host #question-display {
+  text-align: center;
+  margin: 30px 0;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.host .question-text {
+  font-size: 2rem;
+  color: #2c3e50;
+  line-height: 1.4;
+}
+
+.host #player-status {
+  list-style-type: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.host .player-status-item {
+  display: flex;
+  align-items: center;
+  background-color: #ecf0f1;
+  padding: 8px 16px;
+  border-radius: 20px;
+}
+
+.host .player-status-item.answered {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.host #results-display {
+  text-align: center;
+  margin: 30px 0;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.host #result-header {
+  font-size: 3rem;
+  margin-bottom: 30px;
+}
+
+.host #result-header.success {
+  color: #2ecc71;
+}
+
+.host #result-header.failure {
+  color: #e74c3c;
+}
+
+.host #answer-breakdown {
+  max-width: 800px;
+  margin: 0 auto;
+  margin-bottom: 30px;
+}
+
+/* Player Specific Styles */
+.player #join-screen {
+  max-width: 500px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.player .form-group {
+  margin-bottom: 15px;
+}
+
+.player input[type="text"] {
+  width: 100%;
+  padding: 12px;
+  font-size: 1.1rem;
+  border: 2px solid #ddd;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.player input[type="text"]:focus {
+  border-color: #3498db;
+  outline: none;
+}
+
+.player #room-input {
+  text-transform: uppercase;
+  letter-spacing: 5px;
+  font-weight: bold;
+}
+
+.player #waiting-screen,
+.player #game-screen,
+.player #answer-submitted,
+.player #results-screen {
+  max-width: 500px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.player .question-text {
+  font-size: 1.6rem;
+  color: #2c3e50;
+  line-height: 1.4;
+  margin-bottom: 30px;
+}
+
+.player #answer-form {
+  margin-bottom: 20px;
+}
+
+.player .sense-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.player .sense-label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #3498db;
+}
+
+.player .sense-select {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  border: 2px solid #ddd;
+  border-radius: 5px;
+}
+
+.player #player-results {
+  text-align: left;
+  margin: 20px 0;
+}
+
+.player .result-item {
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+
+.player .result-item.match {
+  background-color: #e8f8f5;
+  border-left: 4px solid #2ecc71;
+}
+
+.player .result-item.mismatch {
+  background-color: #fdedec;
+  border-left: 4px solid #e74c3c;
+}

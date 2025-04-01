@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Common Sense Game</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .landing {
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .landing h1 {
+      font-size: 3rem;
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
+    
+    .landing p {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+      color: #34495e;
+    }
+    
+    .button-container {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 40px;
+    }
+    
+    .landing-btn {
+      display: inline-block;
+      padding: 15px 30px;
+      font-size: 1.2rem;
+      text-decoration: none;
+      border-radius: 5px;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .landing-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .host-btn {
+      background-color: #3498db;
+      color: white;
+    }
+    
+    .player-btn {
+      background-color: #2ecc71;
+      color: white;
+    }
+    
+    .instructions {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-top: 40px;
+      text-align: left;
+    }
+    
+    .instructions h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="landing">
+    <h1>Common Sense Game</h1>
+    <p>A multiplayer game to see if you and your friends share common sense!</p>
+    
+    <div class="button-container">
+      <a href="host.html" class="landing-btn host-btn">Host a Game</a>
+      <a href="player.html" class="landing-btn player-btn">Join a Game</a>
+    </div>
+    
+    <div class="instructions">
+      <h2>How to Play</h2>
+      <ol>
+        <li>One person hosts the game on their computer or tablet.</li>
+        <li>The host creates a room and shares the 4-letter room code with players.</li>
+        <li>Players join using their own devices (phones, tablets, etc.).</li>
+        <li>Each round presents a question like "What COLOR and TASTE are the MOST HAPPINESS?"</li>
+        <li>Players choose their answers from dropdown menus for each sense.</li>
+        <li>After everyone locks in their answers, find out if you all share "common sense"!</li>
+        <li>If everyone gives the exact same answer, you win the round!</li>
+      </ol>
+      <p><strong>Example Question:</strong> "What COLOR and TASTE are the SECOND MOST SADNESS?"</p>
+      <p><strong>Example Answers:</strong> Perhaps you think sadness is Blue and Bitter, but your friend thinks it's Gray and Salty. Do you share common sense?</p>
+    </div>
+  </div>
+</body>
+</html>

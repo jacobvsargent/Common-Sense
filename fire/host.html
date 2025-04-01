@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Common Sense Game - Host</title>
+  <link rel="stylesheet" href="styles.css">
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</head>
+<body class="host">
+  <div class="container">
+    <header>
+      <h1>Common Sense Game</h1>
+      <h2>Host Screen</h2>
+    </header>
+    
+    <div id="setup-screen">
+      <h2>Game Setup</h2>
+      <button id="create-game" class="btn-primary">Create New Game</button>
+      <div id="room-display" class="hidden">
+        <h3>Room Code: <span id="room-code" class="highlight"></span></h3>
+        <p>Players: <span id="player-count">0</span></p>
+        <div id="player-list"></div>
+        <button id="start-game" class="btn-primary disabled" disabled>Start Game</button>
+      </div>
+    </div>
+
+    <div id="game-screen" class="hidden">
+      <div id="question-display">
+        <h2 id="current-question" class="question-text"></h2>
+      </div>
+      <div id="waiting-players">
+        <h3>Waiting for players to answer...</h3>
+        <ul id="player-status"></ul>
+      </div>
+      <div id="results-display" class="hidden">
+        <h2 id="result-header"></h2>
+        <div id="answer-breakdown"></div>
+        <button id="next-round" class="btn-primary">Next Round</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="common-sense-data.js"></script>
+  <script src="host.js"></script>
+</body>
+</html>

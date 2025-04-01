@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Common Sense Game - Player</title>
+  <link rel="stylesheet" href="styles.css">
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</head>
+<body class="player">
+  <div class="container">
+    <header>
+      <h1>Common Sense Game</h1>
+    </header>
+    
+    <div id="join-screen">
+      <h2>Join a Game</h2>
+      <div class="form-group">
+        <input type="text" id="name-input" placeholder="Your Name" maxlength="15">
+      </div>
+      <div class="form-group">
+        <input type="text" id="room-input" placeholder="Room Code" maxlength="4">
+      </div>
+      <button id="join-game" class="btn-primary">Join Game</button>
+      <p id="join-error" class="error hidden"></p>
+    </div>
+
+    <div id="waiting-screen" class="hidden">
+      <h2>Waiting for Host to Start</h2>
+      <p>Room Code: <span id="player-room-code" class="highlight"></span></p>
+      <p>You are: <span id="player-name" class="highlight"></span></p>
+    </div>
+
+    <div id="game-screen" class="hidden">
+      <h2 id="player-question" class="question-text"></h2>
+      <div id="answer-form"></div>
+      <button id="submit-answer" class="btn-primary">Lock In Answer</button>
+    </div>
+
+    <div id="answer-submitted" class="hidden">
+      <h2>Answer Submitted!</h2>
+      <p>Waiting for other players...</p>
+    </div>
+
+    <div id="results-screen" class="hidden">
+      <h2 id="player-result-header"></h2>
+      <div id="player-results"></div>
+      <p>Waiting for next round...</p>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="common-sense-data.js"></script>
+  <script src="player.js"></script>
+</body>
+</html>
