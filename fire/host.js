@@ -19,7 +19,6 @@ const currentQuestionElement = document.getElementById('current-question');
 const playerStatusElement = document.getElementById('player-status');
 const resultsDisplay = document.getElementById('results-display');
 const resultHeaderElement = document.getElementById('result-header');
-const answerBreakdownElement = document.getElementById('answer-breakdown');
 const leaderboardElement = document.getElementById('leaderboard');
 const nextRoundBtn = document.getElementById('next-round');
 
@@ -133,6 +132,7 @@ function startNewRound() {
       // Display the question
       currentQuestionElement.textContent = currentRound.question;
       resultsDisplay.classList.add('hidden');
+      playerStatusElement.parentElement.classList.remove('hidden'); // Show waiting status
       
       // Reset player status
       updatePlayerStatus();
@@ -214,62 +214,49 @@ function showResults() {
   resultHeaderElement.textContent = isCommonSense ? "Common Sense!" : "Nonsensical!";
   resultHeaderElement.className = isCommonSense ? "success" : "failure";
   
-  // Build answer breakdown
-  let breakdownHTML = '<div class="answer-grid">';
+  // Update the integrated leaderboard with player responses
+  updateIntegratedLeaderboard(roundPoints);
   
-  // Create table header with player names
-  breakdownHTML += '<table class="result-table"><thead><tr><th>Sense</th>';
+  // Hide the waiting for players status section
+  playerStatusElement.parentElement.classList.add('hidden');
   
-  Object.keys(players).forEach(playerId => {
-    breakdownHTML += `<th>${players[playerId].name}</th>`;
-  });
-  
-  breakdownHTML += '</tr></thead><tbody>';
-  
-  // Add rows for each sense
-  currentRound.senses.forEach(sense => {
-    breakdownHTML += `<tr><td>${sense}</td>`;
-    
-    Object.keys(players).forEach(playerId => {
-      const playerAnswer = playerAnswers[playerId] || {};
-      const answerForSense = playerAnswer[sense] || "-";
-      breakdownHTML += `<td>${answerForSense}</td>`;
-    });
-    
-    breakdownHTML += '</tr>';
-  });
-  
-  // Add row for points earned this round
-  breakdownHTML += `<tr class="points-row"><td><strong>Points This Round</strong></td>`;
-  
-  Object.keys(players).forEach(playerId => {
-    const pointsEarned = roundPoints[playerId] || 0;
-    breakdownHTML += `<td class="points ${pointsEarned > 0 ? 'points-earned' : ''}">+${pointsEarned}</td>`;
-  });
-  
-  breakdownHTML += '</tr></tbody></table></div>';
-  
-  answerBreakdownElement.innerHTML = breakdownHTML;
-  
-  // Build leaderboard
-  updateLeaderboard();
-  
+  // Show results display
   resultsDisplay.classList.remove('hidden');
 }
 
-// Update the leaderboard display
-function updateLeaderboard() {
+// Update the integrated leaderboard
+function updateIntegratedLeaderboard(roundPoints) {
   // Sort players by score (highest first)
   const sortedPlayers = Object.keys(playerScores).sort((a, b) => {
     return playerScores[b] - playerScores[a];
   });
   
-  let leaderboardHTML = '<h3>Game Leaderboard</h3>';
-  leaderboardHTML += '<table class="leaderboard-table"><thead><tr><th>Rank</th><th>Player</th><th>Score</th></tr></thead><tbody>';
+  let leaderboardHTML = `
+    <h3>Round Results & Leaderboard</h3>
+    <div class="round-question">"${currentRound.question}"</div>
+    <table class="leaderboard-table">
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Player</th>
+          <th>Total Score</th>
+          <th>This Round</th>`;
+  
+  // Add column headers for each sense
+  currentRound.senses.forEach(sense => {
+    leaderboardHTML += `<th>${sense}</th>`;
+  });
+  
+  leaderboardHTML += `
+        </tr>
+      </thead>
+      <tbody>
+  `;
   
   sortedPlayers.forEach((playerId, index) => {
     const playerName = players[playerId] ? players[playerId].name : 'Unknown';
     const playerScore = playerScores[playerId] || 0;
+    const pointsEarned = roundPoints[playerId] || 0;
     const rank = index + 1;
     
     // Add classes for top 3 positions
@@ -283,8 +270,17 @@ function updateLeaderboard() {
         <td>${rank}</td>
         <td>${playerName}</td>
         <td>${playerScore}</td>
-      </tr>
-    `;
+        <td class="${pointsEarned > 0 ? 'points-earned' : ''}">${pointsEarned > 0 ? '+' + pointsEarned : '0'}</td>`;
+    
+    // Add player answers for each sense
+    currentRound.senses.forEach(sense => {
+      const playerAnswer = playerAnswers[playerId] && playerAnswers[playerId][sense] 
+        ? playerAnswers[playerId][sense] 
+        : "-";
+      leaderboardHTML += `<td class="player-answer">${playerAnswer}</td>`;
+    });
+    
+    leaderboardHTML += `</tr>`;
   });
   
   leaderboardHTML += '</tbody></table>';

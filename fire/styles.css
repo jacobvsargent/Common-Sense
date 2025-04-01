@@ -167,27 +167,27 @@ h3 {
   color: #e74c3c;
 }
 
-.host #answer-breakdown {
-  max-width: 800px;
+/* Integrated Leaderboard Styles */
+.host #leaderboard {
+  max-width: 900px;
   margin: 0 auto;
   margin-bottom: 30px;
 }
 
-/* New Leaderboard Styles */
-.host #leaderboard {
-  max-width: 600px;
-  margin: 0 auto;
-  margin-bottom: 30px;
-  padding: 20px;
-  background-color: #f8f9fa;
-  border-radius: 10px;
-  border: 1px solid #e9ecef;
+.host .round-question {
+  font-size: 1.2rem;
+  color: #7f8c8d;
+  margin-bottom: 20px;
+  font-style: italic;
 }
 
 .host .leaderboard-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 15px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .host .leaderboard-table th,
@@ -201,6 +201,7 @@ h3 {
   background-color: #3498db;
   color: white;
   font-weight: bold;
+  white-space: nowrap;
 }
 
 .host .leaderboard-table tr:last-child td {
@@ -219,18 +220,13 @@ h3 {
   background-color: rgba(205, 127, 50, 0.2);
 }
 
-/* Points Row Styling */
-.host .result-table .points-row {
-  border-top: 2px solid #3498db;
-}
-
-.host .result-table .points {
+.host .leaderboard-table .points-earned {
+  color: #2ecc71;
   font-weight: bold;
 }
 
-.host .result-table .points-earned {
-  color: #2ecc71;
-  background-color: rgba(46, 204, 113, 0.1);
+.host .leaderboard-table .player-answer {
+  background-color: #f8f9fa;
 }
 
 /* Player Specific Styles */
