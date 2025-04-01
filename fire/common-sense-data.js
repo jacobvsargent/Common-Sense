@@ -88,30 +88,94 @@ async function loadCommonSenseData() {
     return data;
   } catch (error) {
     console.error('Error loading common sense data:', error);
-    // Return empty structure if file loading fails
-    return { categories: [], modifiers: [], objects: [] };
+    // If loading fails, return the original hardcoded data for fallback
+    return {
+      categories: [
+        { text: "What COLOR and TASTE are", deck: "1 - Category", count: 5 },
+        { text: "What COLOR and TEXTURE are", deck: "1 - Category", count: 4 },
+        { text: "What COLOR and SMELL are", deck: "1 - Category", count: 4 },
+        { text: "What TASTE and TEXTURE are", deck: "1 - Category", count: 3 },
+        { text: "What COLOR, TASTE and SMELL are", deck: "1 - Category", count: 2 },
+        { text: "What COLOR and VOLUME are", deck: "1 - Category", count: 2 }
+      ],
+      modifiers: [
+        { text: "the MOST", deck: "2-Modifier", count: 6 },
+        { text: "the LEAST", deck: "2-Modifier", count: 5 },
+        { text: "the SECOND MOST", deck: "2-Modifier", count: 4 }
+      ],
+      objects: [
+        { text: "SADNESS", deck: "3-Object", count: 4 },
+        { text: "ANGER", deck: "3-Object", count: 4 },
+        { text: "JOY", deck: "3-Object", count: 4 },
+        { text: "FEAR", deck: "3-Object", count: 3 },
+        { text: "LOVE", deck: "3-Object", count: 3 },
+        { text: "ANXIETY", deck: "3-Object", count: 3 },
+        { text: "PEACE", deck: "3-Object", count: 2 },
+        { text: "ENVY", deck: "3-Object", count: 2 },
+        { text: "BOREDOM", deck: "3-Object", count: 2 }
+      ]
+    };
   }
 }
 
-// Define common sense data first with placeholder
+// Initialize with original hardcoded data as fallback
 let commonSenseData = {
-  categories: [],
-  modifiers: [],
-  objects: []
+  categories: [
+    { text: "What COLOR and TASTE are", deck: "1 - Category", count: 5 },
+    { text: "What COLOR and TEXTURE are", deck: "1 - Category", count: 4 },
+    { text: "What COLOR and SMELL are", deck: "1 - Category", count: 4 },
+    { text: "What TASTE and TEXTURE are", deck: "1 - Category", count: 3 },
+    { text: "What COLOR, TASTE and SMELL are", deck: "1 - Category", count: 2 },
+    { text: "What COLOR and VOLUME are", deck: "1 - Category", count: 2 }
+  ],
+  modifiers: [
+    { text: "the MOST", deck: "2-Modifier", count: 6 },
+    { text: "the LEAST", deck: "2-Modifier", count: 5 },
+    { text: "the SECOND MOST", deck: "2-Modifier", count: 4 }
+  ],
+  objects: [
+    { text: "SADNESS", deck: "3-Object", count: 4 },
+    { text: "ANGER", deck: "3-Object", count: 4 },
+    { text: "JOY", deck: "3-Object", count: 4 },
+    { text: "FEAR", deck: "3-Object", count: 3 },
+    { text: "LOVE", deck: "3-Object", count: 3 },
+    { text: "ANXIETY", deck: "3-Object", count: 3 },
+    { text: "PEACE", deck: "3-Object", count: 2 },
+    { text: "ENVY", deck: "3-Object", count: 2 },
+    { text: "BOREDOM", deck: "3-Object", count: 2 }
+  ]
 };
 
-// Load the data immediately
-(async function() {
+// Flag to track if data is loaded
+let dataLoaded = false;
+
+// Function to initialize the game
+async function initializeGame() {
   try {
-    commonSenseData = await loadCommonSenseData();
-    console.log('Common sense data loaded successfully');
+    // Load data from CSV
+    const loadedData = await loadCommonSenseData();
     
-    // You might want to trigger any initialization functions here
-    // that depend on the data being loaded
+    // Only update if we got valid data
+    if (loadedData.categories.length > 0 && 
+        loadedData.modifiers.length > 0 && 
+        loadedData.objects.length > 0) {
+      commonSenseData = loadedData;
+      console.log('Common sense data loaded successfully from CSV');
+      logImportedData();
+    } else {
+      console.warn('CSV data was empty or invalid, using fallback data');
+    }
+    
+    dataLoaded = true;
+    
+    // Now that data is loaded, you can safely start the game
+    startNewRound(); // Call your startNewRound function here
   } catch (error) {
     console.error('Failed to load common sense data:', error);
+    dataLoaded = true; // Set to true anyway as we have fallback data
+    startNewRound(); // Use fallback data
   }
-})();
+}
 
 // Sense options remain the same
 const senseOptions = {
@@ -150,3 +214,48 @@ function weightedRandom(items) {
   
   return items[0]; // Fallback
 }
+
+function logImportedData() {
+  console.log("=== IMPORTED COMMON SENSE DATA ===");
+  console.log("Categories:", commonSenseData.categories);
+  console.log("Modifiers:", commonSenseData.modifiers);
+  console.log("Objects:", commonSenseData.objects);
+  
+  // Log the total count of items in each category
+  console.log("Total categories:", commonSenseData.categories.length);
+  console.log("Total modifiers:", commonSenseData.modifiers.length);
+  console.log("Total objects:", commonSenseData.objects.length);
+  
+  // Detailed logging of each item
+  console.log("\n=== DETAILED DATA ===");
+  
+  console.log("\nCATEGORIES:");
+  commonSenseData.categories.forEach((item, index) => {
+    console.log(`  ${index + 1}. "${item.text}" (deck: ${item.deck}, count: ${item.count})`);
+  });
+  
+  console.log("\nMODIFIERS:");
+  commonSenseData.modifiers.forEach((item, index) => {
+    console.log(`  ${index + 1}. "${item.text}" (deck: ${item.deck}, count: ${item.count})`);
+  });
+  
+  console.log("\nOBJECTS:");
+  commonSenseData.objects.forEach((item, index) => {
+    console.log(`  ${index + 1}. "${item.text}" (deck: ${item.deck}, count: ${item.count})`);
+  });
+}
+
+// Safe version of startNewRound that checks data is loaded
+function startNewRound() {
+  if (!dataLoaded) {
+    console.log("Data not loaded yet, waiting...");
+    setTimeout(startNewRound, 100); // Try again in 100ms
+    return;
+  }
+  
+  // Your existing startNewRound code here
+  // Now it's safe to use commonSenseData
+}
+
+// Initialize the game when the page loads
+document.addEventListener('DOMContentLoaded', initializeGame);
