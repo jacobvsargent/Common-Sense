@@ -1,0 +1,100 @@
+text,deck,count
+What COLOR is,1 - Category,2
+What TEXTURE is,1 - Category,2
+What TASTE is,1 - Category,2
+What SMELL is,1 - Category,2
+What COLOR and TEXTURE are,1 - Category,1
+What COLOR and TASTE are,1 - Category,1
+What COLOR and SMELL are,1 - Category,1
+What TEXTURE and TASTE are,1 - Category,1
+What TEXTURE and SMELL are,1 - Category,1
+What TASTE and SMELL are,1 - Category,1
+"What COLOR, TEXTURE, and TASTE are",1 - Category,1
+"What COLOR, TASTE, and SMELL are",1 - Category,1
+"What TEXTURE, TASTE, and SMELL are",1 - Category,1
+What VOLUME is,1 - Category,2
+What VOLUME and COLOR are,1 - Category,1
+What VOLUME and TASTE are,1 - Category,1
+What VOLUME and TEXTURE are,1 - Category,1
+What VOLUME and SMELL are,1 - Category,1
+the MOST,2 - Modifier,6
+the LEAST,2 - Modifier,4
+the SECOND MOST,2 - Modifier,4
+MILITARY?,3 - Object,1
+OSCARS?,3 - Object,1
+DANGER?,3 - Object,1
+MARRIAGE?,3 - Object,1
+VALENTINE'S DAY?,3 - Object,1
+HORROR MOVIE?,3 - Object,1
+ELEMENTARY SCHOOL?,3 - Object,1
+NOSTALGIA?,3 - Object,1
+STOCK MARKET?,3 - Object,1
+BRAIN ROT?,3 - Object,1
+TECHNOLOGY?,3 - Object,1
+TOURISM?,3 - Object,1
+PHILOSOPHY?,3 - Object,1
+HUMOR?,3 - Object,1
+AUGUST?,3 - Object,1
+DANGER?,3 - Object,1
+CHEEK KISS?,3 - Object,1
+BABY?,3 - Object,1
+BLISS?,3 - Object,1
+ROYALTY / ROYAL FAMILY?,3 - Object,1
+SUB-SAHARAN AFRICA?,3 - Object,1
+AMERICAN DREAM?,3 - Object,1
+ARTIFICIAL?,3 - Object,1
+HOPE?,3 - Object,1
+DEADLINE?,3 - Object,1
+MENTAL BREAKDOWN?,3 - Object,1
+SECOND AMENDMENT?,3 - Object,1
+CASTLE?,3 - Object,1
+PLOT TWIST?,3 - Object,1
+SUNDAY?,3 - Object,1
+SPORTS?,3 - Object,1
+FARMER'S MARKET?,3 - Object,1
+GAS STATION?,3 - Object,1
+PARK BENCH?,3 - Object,1
+COVID-19 PANDEMIC?,3 - Object,1
+COOPERATION?,3 - Object,1
+PRISONER'S DILEMMA?,3 - Object,1
+FUN?,3 - Object,1
+SUPREME COURT?,3 - Object,1
+ONLINE BEEF?,3 - Object,1
+ETERNAL?,3 - Object,1
+SUPERHERO?,3 - Object,1
+AGRICULTURE?,3 - Object,1
+GRILL OUT?,3 - Object,1
+MORNING ROUTINE?,3 - Object,1
+MAGIC?,3 - Object,1
+PARANORMAL?,3 - Object,1
+MUSHROOM?,3 - Object,1
+BUDDHISM?,3 - Object,1
+SADNESS?,3 - Object,1
+PURE?,3 - Object,1
+ICE CREAM?,3 - Object,1
+MEXICAN RESTAURANT?,3 - Object,1
+DIVORCE?,3 - Object,1
+FASHION?,3 - Object,1
+VAMPIRE?,3 - Object,1
+SPEED?,3 - Object,1
+5:30 AM?,3 - Object,1
+TORNADO?,3 - Object,1
+FORBIDDEN LOVE?,3 - Object,1
+JAZZ?,3 - Object,1
+CARNIVAL?,3 - Object,1
+VICTORY?,3 - Object,1
+KARAOKE?,3 - Object,1
+ENGINEERING?,3 - Object,1
+OUTER SPACE?,3 - Object,1
+MANUAL LABOR?,3 - Object,1
+DINOSAUR?,3 - Object,1
+INSURANCE?,3 - Object,1
+UNCANNY VALLEY?,3 - Object,1
+FOREIGN LANGUAGE?,3 - Object,1
+SOLITUDE?,3 - Object,1
+WHITE LIE?,3 - Object,1
+MOUNTAIN?,3 - Object,1
+FORGIVENESS?,3 - Object,1
+STANDARDIZED TEST?,3 - Object,1
+BREAKFAST?,3 - Object,1
+TIME?,3 - Object,1

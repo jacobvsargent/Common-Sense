@@ -1,32 +1,58 @@
-// This file represents the parsed CSV data
-const commonSenseData = {
-  categories: [
-    { text: "What COLOR and TASTE are", deck: "1 - Category", count: 5 },
-    { text: "What COLOR and TEXTURE are", deck: "1 - Category", count: 4 },
-    { text: "What COLOR and SMELL are", deck: "1 - Category", count: 4 },
-    { text: "What TASTE and TEXTURE are", deck: "1 - Category", count: 3 },
-    { text: "What COLOR, TASTE and SMELL are", deck: "1 - Category", count: 2 },
-    { text: "What COLOR and VOLUME are", deck: "1 - Category", count: 2 }
-  ],
-  modifiers: [
-    { text: "the MOST", deck: "2-Modifier", count: 6 },
-    { text: "the LEAST", deck: "2-Modifier", count: 5 },
-    { text: "the SECOND MOST", deck: "2-Modifier", count: 4 }
-  ],
-  objects: [
-    { text: "SADNESS", deck: "3-Object", count: 4 },
-    { text: "ANGER", deck: "3-Object", count: 4 },
-    { text: "JOY", deck: "3-Object", count: 4 },
-    { text: "FEAR", deck: "3-Object", count: 3 },
-    { text: "LOVE", deck: "3-Object", count: 3 },
-    { text: "ANXIETY", deck: "3-Object", count: 3 },
-    { text: "PEACE", deck: "3-Object", count: 2 },
-    { text: "ENVY", deck: "3-Object", count: 2 },
-    { text: "BOREDOM", deck: "3-Object", count: 2 }
-  ]
-};
+// Import the necessary module to read files
+const fs = require('fs');
+const path = require('path');
+const { parse } = require('csv-parse/sync');
 
-// Sense options
+// Function to load and parse the CSV file
+function loadCommonSenseData(filePath) {
+  try {
+    // Read the CSV file
+    const fileContent = fs.readFileSync(filePath, 'utf8');
+    
+    // Parse the CSV content
+    const records = parse(fileContent, {
+      columns: true,
+      skip_empty_lines: true,
+      trim: true
+    });
+    
+    // Organize data into categories, modifiers, and objects
+    const data = {
+      categories: [],
+      modifiers: [],
+      objects: []
+    };
+    
+    // Process each record from the CSV
+    records.forEach(record => {
+      const item = {
+        text: record.text,
+        deck: record.deck,
+        count: parseInt(record.count, 10)
+      };
+      
+      // Sort into appropriate category based on deck value
+      if (record.deck.startsWith('1 -')) {
+        data.categories.push(item);
+      } else if (record.deck.startsWith('2-')) {
+        data.modifiers.push(item);
+      } else if (record.deck.startsWith('3-')) {
+        data.objects.push(item);
+      }
+    });
+    
+    return data;
+  } catch (error) {
+    console.error('Error loading common sense data:', error);
+    // Return empty structure if file loading fails
+    return { categories: [], modifiers: [], objects: [] };
+  }
+}
+
+// Load the data from the CSV file
+const commonSenseData = loadCommonSenseData(path.join(__dirname, 'common_sense.csv'));
+
+// Sense options remain the same
 const senseOptions = {
   "Color": ["", "Red", "Blue", "Yellow", "Green", "Purple", "Orange", "Black", "White", "Pink", "Brown"],
   "Texture": ["", "Bumpy", "Sharp", "Sticky", "Smooth", "Slippery", "Squishy", "Firm", "Fluffy"],
