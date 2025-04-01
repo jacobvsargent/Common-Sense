@@ -1,20 +1,64 @@
-// Import the necessary module to read files
-const fs = require('fs');
-const path = require('path');
-const { parse } = require('csv-parse/sync');
+// Function to parse CSV text
+function parseCSV(text) {
+  const lines = text.split('\n');
+  const headers = lines[0].split(',').map(header => header.trim().replace(/^"(.*)"$/, '$1'));
+  
+  const records = [];
+  for (let i = 1; i < lines.length; i++) {
+    if (!lines[i].trim()) continue; // Skip empty lines
+    
+    // Handle values that might contain commas within quotes
+    const row = {};
+    let currentPosition = 0;
+    let valueStart = 0;
+    let insideQuotes = false;
+    
+    headers.forEach(header => {
+      // Find next value
+      while (currentPosition < lines[i].length) {
+        if (lines[i][currentPosition] === '"') {
+          insideQuotes = !insideQuotes;
+        } else if (lines[i][currentPosition] === ',' && !insideQuotes) {
+          // Found end of value
+          let value = lines[i].substring(valueStart, currentPosition).trim();
+          // Remove surrounding quotes if present
+          value = value.replace(/^"(.*)"$/, '$1');
+          row[header] = value;
+          
+          valueStart = currentPosition + 1;
+          currentPosition++;
+          break;
+        }
+        currentPosition++;
+      }
+      
+      // If we reached the end of the line
+      if (currentPosition >= lines[i].length) {
+        let value = lines[i].substring(valueStart).trim();
+        value = value.replace(/^"(.*)"$/, '$1');
+        row[header] = value;
+      }
+    });
+    
+    records.push(row);
+  }
+  
+  return records;
+}
 
-// Function to load and parse the CSV file
-function loadCommonSenseData(filePath) {
+// Function to load and process the CSV file
+async function loadCommonSenseData() {
   try {
-    // Read the CSV file
-    const fileContent = fs.readFileSync(filePath, 'utf8');
+    // Fetch the CSV file
+    const response = await fetch('common_sense.csv');
+    if (!response.ok) {
+      throw new Error(`Failed to fetch CSV: ${response.status} ${response.statusText}`);
+    }
+    
+    const csvText = await response.text();
     
     // Parse the CSV content
-    const records = parse(fileContent, {
-      columns: true,
-      skip_empty_lines: true,
-      trim: true
-    });
+    const records = parseCSV(csvText);
     
     // Organize data into categories, modifiers, and objects
     const data = {
@@ -49,8 +93,25 @@ function loadCommonSenseData(filePath) {
   }
 }
 
-// Load the data from the CSV file
-const commonSenseData = loadCommonSenseData(path.join(__dirname, 'common_sense.csv'));
+// Define common sense data first with placeholder
+let commonSenseData = {
+  categories: [],
+  modifiers: [],
+  objects: []
+};
+
+// Load the data immediately
+(async function() {
+  try {
+    commonSenseData = await loadCommonSenseData();
+    console.log('Common sense data loaded successfully');
+    
+    // You might want to trigger any initialization functions here
+    // that depend on the data being loaded
+  } catch (error) {
+    console.error('Failed to load common sense data:', error);
+  }
+})();
 
 // Sense options remain the same
 const senseOptions = {
