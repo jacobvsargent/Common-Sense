@@ -173,6 +173,66 @@ h3 {
   margin-bottom: 30px;
 }
 
+/* New Leaderboard Styles */
+.host #leaderboard {
+  max-width: 600px;
+  margin: 0 auto;
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  border: 1px solid #e9ecef;
+}
+
+.host .leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.host .leaderboard-table th,
+.host .leaderboard-table td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.host .leaderboard-table th {
+  background-color: #3498db;
+  color: white;
+  font-weight: bold;
+}
+
+.host .leaderboard-table tr:last-child td {
+  border-bottom: none;
+}
+
+.host .leaderboard-table .first-place {
+  background-color: rgba(255, 215, 0, 0.2);
+}
+
+.host .leaderboard-table .second-place {
+  background-color: rgba(192, 192, 192, 0.2);
+}
+
+.host .leaderboard-table .third-place {
+  background-color: rgba(205, 127, 50, 0.2);
+}
+
+/* Points Row Styling */
+.host .result-table .points-row {
+  border-top: 2px solid #3498db;
+}
+
+.host .result-table .points {
+  font-weight: bold;
+}
+
+.host .result-table .points-earned {
+  color: #2ecc71;
+  background-color: rgba(46, 204, 113, 0.1);
+}
+
 /* Player Specific Styles */
 .player #join-screen {
   max-width: 500px;
