@@ -1,0 +1,11 @@
+> all players have "Next Round" button on their phones
+> instructions on index.html
+> copyright yadda yadda
+> partial sense page?
+> describe mode
+> set number of rounds? 5? thematic? wow
+> point jacobsargent.com to new spot
+> url for game?
+> background
+> timer
+> players can show up as objects
