@@ -114,6 +114,24 @@ function setupGameListeners() {
     }
   });
   
+  // Listen for round results
+  db.ref(`games/${gameId}/roundResult`).on('value', (snapshot) => {
+    const roundResult = snapshot.val();
+    if (roundResult) {
+      // Update the player result header based on consensus status
+      if (roundResult.consensusStatus === "common") {
+        playerResultHeader.textContent = "That's Common Sense!";
+        playerResultHeader.className = "success";
+      } else if (roundResult.consensusStatus === "partial") {
+        playerResultHeader.textContent = "Partial Sense...";
+        playerResultHeader.className = "partial";
+      } else {
+        playerResultHeader.textContent = "Nonsensical!";
+        playerResultHeader.className = "failure";
+      }
+    }
+  });
+  
   let gameSnapshot = {};
   db.ref(`games/${gameId}`).on('value', (snapshot) => {
     gameSnapshot = snapshot.val() || {};
@@ -126,7 +144,7 @@ function setupGameListeners() {
     if (Object.keys(answers).length === Object.keys(players).length &&
         Object.keys(players).length > 0 &&
         answers[playerId]) {
-      showPlayerResults(answers);
+      showPlayerResults(answers, players);
     }
   });
 }
@@ -210,32 +228,11 @@ function submitPlayerAnswer() {
 }
 
 // Show player results
-function showPlayerResults(allAnswers) {
+function showPlayerResults(allAnswers, allPlayers) {
   // Hide other screens
   gameScreen.classList.add('hidden');
   answerSubmitted.classList.add('hidden');
   resultsScreen.classList.remove('hidden');
-  
-  // Determine if all players gave the same answer
-  const answersArray = Object.values(allAnswers);
-  let isCommonSense = true;
-  
-  if (answersArray.length > 1) {
-    const firstAnswer = JSON.stringify(answersArray[0]);
-    
-    for (let i = 1; i < answersArray.length; i++) {
-      if (JSON.stringify(answersArray[i]) !== firstAnswer) {
-        isCommonSense = false;
-        break;
-      }
-    }
-  } else {
-    isCommonSense = false;
-  }
-  
-  // Display header
-  playerResultHeader.textContent = isCommonSense ? "Common Sense!" : "Nonsensical!";
-  playerResultHeader.className = isCommonSense ? "success" : "failure";
   
   // Show player's answers
   playerResults.innerHTML = '';
@@ -246,18 +243,34 @@ function showPlayerResults(allAnswers) {
     resultItem.className = 'result-item';
     
     // Check if this sense has a match with all other players
-    let allMatch = true;
+    let matchCount = 0;
+    let totalPlayers = 0;
+    
     for (const pid in allAnswers) {
       if (pid === playerId) continue;
+      totalPlayers++;
       
-      if (allAnswers[pid][sense] !== myAnswers[sense]) {
-        allMatch = false;
-        break;
+      if (allAnswers[pid][sense] === myAnswers[sense]) {
+        matchCount++;
       }
     }
     
-    resultItem.classList.add(allMatch ? 'match' : 'mismatch');
-    resultItem.textContent = `${sense}: ${myAnswers[sense]}${allMatch ? ' (Everyone agreed!)' : ''}`;
+    const allMatch = (matchCount === totalPlayers && totalPlayers > 0);
+    const someMatch = (matchCount > 0);
+    
+    resultItem.classList.add(allMatch ? 'match' : someMatch ? 'partial-match' : 'mismatch');
+    
+    // Show match information
+    let matchText = '';
+    if (allMatch) {
+      matchText = ' (Everyone agreed!)';
+    } else if (someMatch) {
+      matchText = ` (${matchCount} player${matchCount !== 1 ? 's' : ''} agreed)`;
+    } else {
+      matchText = ' (No one else agreed)';
+    }
+    
+    resultItem.textContent = `${sense}: ${myAnswers[sense]}${matchText}`;
     playerResults.appendChild(resultItem);
   }
 }

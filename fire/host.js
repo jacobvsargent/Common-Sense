@@ -193,48 +193,35 @@ function showResults() {
   // Calculate points for this round
   const roundPoints = calculateRoundPoints();
   
-  // Determine if all players gave the same answer
-  const allAnswers = Object.values(playerAnswers);
-  let consensusStatus = "nonsensical"; // Default status
-    
-  if (allAnswers.length > 0) {
-    // Count occurrences of each unique answer
-    const answerCounts = {};
-    
-    allAnswers.forEach(answer => {
-      const key = JSON.stringify(answer);
-      answerCounts[key] = (answerCounts[key] || 0) + 1;
-    });
-    
-    // Find the most common answer and its count
-    let maxCount = 0;
-    let totalAnswers = allAnswers.length;
-    
-    Object.values(answerCounts).forEach(count => {
-      if (count > maxCount) {
-        maxCount = count;
-      }
-    });
-    
-    // Determine status based on match percentage
-    if (maxCount === totalAnswers) {
-      consensusStatus = "common"; // All answers match
-    } else if (maxCount > 1) {
-      consensusStatus = "partial"; // Some answers match
-    }
-  }
-
-  // Display results
-  if (consensusStatus === "common") {
-    resultHeaderElement.textContent = "Common Sense!";
-    resultHeaderElement.className = "success";
-  } else if (consensusStatus === "partial") {
-    resultHeaderElement.textContent = "Partial Sense!";
-    resultHeaderElement.className = "partial";
-  } else {
+  // Calculate total points earned this round and maximum possible points
+  const totalPointsEarned = Object.values(roundPoints).reduce((sum, points) => sum + points, 0);
+  const playerCount = Object.keys(players).length;
+  const sensesCount = currentRound.senses.length;
+  const maxPossiblePoints = playerCount * sensesCount;
+  
+  // Update result header based on total points earned
+  let consensusStatus;
+  if (totalPointsEarned === 0) {
+    consensusStatus = "nonsensical";
     resultHeaderElement.textContent = "Nonsensical!";
     resultHeaderElement.className = "failure";
+  } else if (totalPointsEarned === maxPossiblePoints) {
+    consensusStatus = "common";
+    resultHeaderElement.textContent = "That's Common Sense!";
+    resultHeaderElement.className = "success";
+  } else {
+    consensusStatus = "partial";
+    resultHeaderElement.textContent = "Partial Sense...";
+    resultHeaderElement.className = "partial";
   }
+  
+  // Save consensus status to Firebase for player screens
+  db.ref(`games/${gameId}/roundResult`).set({
+    consensusStatus: consensusStatus,
+    totalPointsEarned: totalPointsEarned,
+    maxPossiblePoints: maxPossiblePoints
+  });
+  
   // Update the integrated leaderboard with player responses
   updateIntegratedLeaderboard(roundPoints);
   
