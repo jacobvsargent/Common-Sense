@@ -19,7 +19,7 @@ What VOLUME and TEXTURE are,1 - Category,1
 What VOLUME and SMELL are,1 - Category,1
 the MOST,2 - Modifier,6
 the LEAST,2 - Modifier,4
-the SECOND MOST,2 - Modifier,4
+the SECOND MOST,2 - Modifier,0
 MILITARY?,3 - Object,1
 OSCARS?,3 - Object,1
 DANGER?,3 - Object,1
