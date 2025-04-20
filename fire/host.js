@@ -195,25 +195,46 @@ function showResults() {
   
   // Determine if all players gave the same answer
   const allAnswers = Object.values(playerAnswers);
-  let isCommonSense = true;
-  
-  if (allAnswers.length > 0) {
-    const firstAnswer = JSON.stringify(allAnswers[0]);
+  let consensusStatus = "nonsensical"; // Default status
     
-    for (let i = 1; i < allAnswers.length; i++) {
-      if (JSON.stringify(allAnswers[i]) !== firstAnswer) {
-        isCommonSense = false;
-        break;
+  if (allAnswers.length > 0) {
+    // Count occurrences of each unique answer
+    const answerCounts = {};
+    
+    allAnswers.forEach(answer => {
+      const key = JSON.stringify(answer);
+      answerCounts[key] = (answerCounts[key] || 0) + 1;
+    });
+    
+    // Find the most common answer and its count
+    let maxCount = 0;
+    let totalAnswers = allAnswers.length;
+    
+    Object.values(answerCounts).forEach(count => {
+      if (count > maxCount) {
+        maxCount = count;
       }
+    });
+    
+    // Determine status based on match percentage
+    if (maxCount === totalAnswers) {
+      consensusStatus = "common"; // All answers match
+    } else if (maxCount > 1) {
+      consensusStatus = "partial"; // Some answers match
     }
-  } else {
-    isCommonSense = false;
   }
-  
+
   // Display results
-  resultHeaderElement.textContent = isCommonSense ? "Common Sense!" : "Nonsensical!";
-  resultHeaderElement.className = isCommonSense ? "success" : "failure";
-  
+  if (consensusStatus === "common") {
+    resultHeaderElement.textContent = "Common Sense!";
+    resultHeaderElement.className = "success";
+  } else if (consensusStatus === "partial") {
+    resultHeaderElement.textContent = "Partial Sense!";
+    resultHeaderElement.className = "partial";
+  } else {
+    resultHeaderElement.textContent = "Nonsensical!";
+    resultHeaderElement.className = "failure";
+  }
   // Update the integrated leaderboard with player responses
   updateIntegratedLeaderboard(roundPoints);
   

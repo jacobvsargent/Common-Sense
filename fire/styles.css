@@ -169,6 +169,10 @@ h3 {
   color: #e74c3c;
 }
 
+.host #result-header.partial {
+  color: #f39c12; /* Orange color for partial matches */
+}
+
 /* Integrated Leaderboard Styles */
 .host #leaderboard {
   max-width: 900px;
