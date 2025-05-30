@@ -174,18 +174,20 @@ function setupGameListeners() {
     }
   });
   
-  // Listen for player answers to know when results are ready
-  db.ref(`games/${gameId}/playerAnswers`).on('value', (snapshot) => {
-    const answers = snapshot.val() || {};
-    
-    if (answers[playerId]) {
-      // Get current game state for player count check
-      db.ref(`games/${gameId}/players`).once('value', (playersSnapshot) => {
+  // Listen for when results are ready (triggered by host)
+  db.ref(`games/${gameId}/roundResult`).on('value', (snapshot) => {
+    const roundResult = snapshot.val();
+    if (roundResult && answerSubmitted.classList.contains('hidden') === false) {
+      // Results are ready and we're currently on the "answer submitted" screen
+      // Get the answers and players to show results
+      Promise.all([
+        db.ref(`games/${gameId}/playerAnswers`).once('value'),
+        db.ref(`games/${gameId}/players`).once('value')
+      ]).then(([answersSnapshot, playersSnapshot]) => {
+        const answers = answersSnapshot.val() || {};
         const players = playersSnapshot.val() || {};
         
-        // If all players have answered, show results
-        if (Object.keys(answers).length === Object.keys(players).length &&
-            Object.keys(players).length > 0) {
+        if (answers[playerId]) {
           showPlayerResults(answers, players);
         }
       });

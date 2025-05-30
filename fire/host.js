@@ -207,7 +207,7 @@ function startNewRound() {
     timestamp: firebase.database.ServerValue.TIMESTAMP
   };
   
-  // Update Firebase
+  // Update Firebase with current round and incremented round number
   Promise.all([
     db.ref(`games/${gameId}/currentRound`).set(currentRound),
     db.ref(`games/${gameId}/currentRoundNumber`).set(currentRoundNumber)
@@ -221,6 +221,9 @@ function startNewRound() {
     
     // Reset player status
     updatePlayerStatus();
+    
+    // Increment round number for next time (AFTER setting it to Firebase)
+    currentRoundNumber++;
   });
 }
 
