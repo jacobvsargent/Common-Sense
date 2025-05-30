@@ -141,14 +141,18 @@ function createGame() {
       const totalPlayers = Object.keys(players).length;
       
       if (readyCount === totalPlayers && totalPlayers > 0 && resultsDisplay.classList.contains('hidden') === false) {
-        // All players are ready, start next round
-        setTimeout(() => {
-          if (totalRounds === 'Infinite' || currentRoundNumber <= totalRounds) {
-            startNewRound();
-          } else {
+        // All players are ready, check if game should end or continue
+        if (totalRounds !== 'Infinite' && currentRoundNumber > totalRounds) {
+          // Game is over
+          setTimeout(() => {
             showGameEnd();
-          }
-        }, 1000);
+          }, 1000);
+        } else {
+          // Start next round
+          setTimeout(() => {
+            startNewRound();
+          }, 1000);
+        }
       }
     });
     
@@ -319,8 +323,8 @@ function showResults() {
   // Show results display
   resultsDisplay.classList.remove('hidden');
   
-  // Check if this is the last round
-  if (totalRounds !== 'Infinite' && currentRoundNumber >= totalRounds) {
+  // Check if this is the last round - FIXED LOGIC
+  if (totalRounds !== 'Infinite' && currentRoundNumber > totalRounds) {
     // Don't show next round status, game will end
     nextRoundStatus.classList.add('hidden');
   } else {
