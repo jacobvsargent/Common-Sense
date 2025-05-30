@@ -143,10 +143,8 @@ function createGame() {
       if (readyCount === totalPlayers && totalPlayers > 0 && resultsDisplay.classList.contains('hidden') === false) {
         // All players are ready, check if game should end or continue
         if (totalRounds !== 'Infinite' && currentRoundNumber > totalRounds) {
-          // Game is over
-          setTimeout(() => {
-            showGameEnd();
-          }, 1000);
+          // This is now handled by the "Show Final Results" button
+          // Don't automatically show game end
         } else {
           // Start next round
           setTimeout(() => {
@@ -323,10 +321,10 @@ function showResults() {
   // Show results display
   resultsDisplay.classList.remove('hidden');
   
-  // Check if this is the last round - FIXED LOGIC
+  // Check if this is the last round - UPDATED LOGIC
   if (totalRounds !== 'Infinite' && currentRoundNumber > totalRounds) {
-    // Don't show next round status, game will end
-    nextRoundStatus.classList.add('hidden');
+    // This is the last round - show "Show Final Results" button instead of next round status
+    showFinalResultsButton();
   } else {
     // Show next round status after a delay
     setTimeout(() => {
@@ -334,6 +332,30 @@ function showResults() {
       updateNextRoundStatus();
     }, 2000);
   }
+}
+
+// NEW: Show the "Show Final Results" button after the last round
+function showFinalResultsButton() {
+  // Create and add the "Show Final Results" button
+  const finalResultsBtn = document.createElement('button');
+  finalResultsBtn.id = 'show-final-results';
+  finalResultsBtn.className = 'btn-primary';
+  finalResultsBtn.textContent = 'Show Final Results';
+  finalResultsBtn.style.marginTop = '20px';
+  finalResultsBtn.style.fontSize = '1.2rem';
+  finalResultsBtn.style.padding = '15px 30px';
+  
+  // Remove any existing final results button
+  const existingBtn = document.getElementById('show-final-results');
+  if (existingBtn) {
+    existingBtn.remove();
+  }
+  
+  // Add the button to the results display
+  resultsDisplay.appendChild(finalResultsBtn);
+  
+  // Add click event listener
+  finalResultsBtn.addEventListener('click', showGameEnd);
 }
 
 // Update the integrated leaderboard
