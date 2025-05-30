@@ -231,6 +231,31 @@ h3 {
   background-color: rgba(205, 127, 50, 0.2);
 }
 
+.first-place {
+  background: linear-gradient(135deg, #ffd700, #ffed4e) !important;
+  color: #8b4513 !important;
+  font-weight: bold;
+}
+
+.second-place {
+  background: linear-gradient(135deg, #c0c0c0, #e8e8e8) !important;
+  color: #444 !important;
+  font-weight: bold;
+}
+
+.third-place {
+  background: linear-gradient(135deg, #cd7f32, #deb887) !important;
+  color: #4a2c2a !important;
+  font-weight: bold;
+}
+
+.first-place td,
+.second-place td,
+.third-place td {
+  background: inherit !important;
+  color: inherit !important;
+}
+
 .host .leaderboard-table .points-earned {
   color: #2ecc71;
   font-weight: bold;
@@ -249,6 +274,28 @@ h3 {
 .leaderboard-table td {
   background-color: white !important;
   color: black !important;
+}
+
+.host .game-info-bubble {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  margin: 20px 0;
+  text-align: center;
+}
+
+.host .game-over-title {
+  font-size: 2.5em;
+  margin: 0;
+  color: #2c3e50;
+  font-weight: bold;
+}
+
+.host .round-info {
+  font-size: 1.2em;
+  color: #2c3e50;
+  font-weight: 600;
 }
 
 /* Player Specific Styles */
@@ -349,4 +396,21 @@ h3 {
 .player .result-item.mismatch {
   background-color: #fdedec;
   border-left: 4px solid #e74c3c;
+}
+
+.final-results-message {
+  background: linear-gradient(135deg, #ffd700, #ffed4e);
+  color: #8b4513;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  margin: 20px 0;
+  border: 3px solid #ffd700;
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+.final-results-message h3 {
+  margin: 0;
+  font-size: 1.5em;
+  font-weight: bold;
 }

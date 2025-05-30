@@ -306,11 +306,38 @@ function showPlayerResults(allAnswers, allPlayers) {
   answerSubmitted.classList.add('hidden');
   resultsScreen.classList.remove('hidden');
   
-  // Reset next round button state
-  nextRoundBtn.classList.remove('hidden');
-  waitingForPlayers.classList.add('hidden');
+  // Check if game is over
+  const isGameOver = (gameSettings.totalRounds !== 'Infinite' && 
+                     gameSettings.currentRoundNumber >= gameSettings.totalRounds);
   
-  // Show player's answers
+  if (isGameOver) {
+    // Game is over - show final results message instead of next round button
+    nextRoundBtn.classList.add('hidden');
+    waitingForPlayers.classList.add('hidden');
+    
+    // Create or update final results message
+    let finalMessage = document.getElementById('final-results-message');
+    if (!finalMessage) {
+      finalMessage = document.createElement('div');
+      finalMessage.id = 'final-results-message';
+      finalMessage.className = 'final-results-message';
+      nextRoundBtn.parentNode.insertBefore(finalMessage, nextRoundBtn);
+    }
+    finalMessage.innerHTML = '<h3>🏆 Final Results on Host Screen! 🏆</h3>';
+    finalMessage.classList.remove('hidden');
+  } else {
+    // Game continues - show next round button
+    nextRoundBtn.classList.remove('hidden');
+    waitingForPlayers.classList.add('hidden');
+    
+    // Hide final results message if it exists
+    const finalMessage = document.getElementById('final-results-message');
+    if (finalMessage) {
+      finalMessage.classList.add('hidden');
+    }
+  }
+  
+  // Show player's answers (existing code continues...)
   playerResults.innerHTML = '';
   const myAnswers = allAnswers[playerId] || {};
   
@@ -350,19 +377,6 @@ function showPlayerResults(allAnswers, allPlayers) {
     playerResults.appendChild(resultItem);
   }
 }
-
-// Handle next round button
-nextRoundBtn.addEventListener('click', () => {
-  // Mark this player as ready for next round
-  db.ref(`games/${gameId}/playerReadyForNext/${playerId}`).set(true)
-    .then(() => {
-      nextRoundBtn.classList.add('hidden');
-      waitingForPlayers.classList.remove('hidden');
-    })
-    .catch((error) => {
-      console.error('Error marking ready for next round:', error);
-    });
-});
 
 // Show game end screen
 function showGameEnd(playerScores, allPlayers) {
