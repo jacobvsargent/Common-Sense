@@ -493,12 +493,29 @@ function showGameEnd() {
   resultsDisplay.classList.add('hidden');
   gameEndElement.classList.remove('hidden');
   
+  // Hide round counter and current question elements
+  const roundCounter = document.querySelector('.round-counter');
+  if (roundCounter) {
+    roundCounter.classList.add('hidden');
+  }
+  
+  const questionDisplay = document.querySelector('.question-display');
+  if (questionDisplay) {
+    questionDisplay.classList.add('hidden');
+  }
+  
+  // Also hide the current question element specifically
+  if (currentQuestionElement) {
+    currentQuestionElement.style.display = 'none';
+  }
+  
   // Create final leaderboard
   const sortedPlayers = Object.keys(playerScores).sort((a, b) => {
     return playerScores[b] - playerScores[a];
   });
   
   let finalHTML = `
+    <h3>Final Standings</h3>
     <table class="leaderboard-table">
       <thead>
         <tr>
@@ -531,11 +548,6 @@ function showGameEnd() {
   finalHTML += '</tbody></table>';
   finalLeaderboardElement.innerHTML = finalHTML;
 }
-
-// New game button
-newGameBtn.addEventListener('click', () => {
-  location.reload();
-});
 
 // Helper Functions
 function generateRoomCode() {
