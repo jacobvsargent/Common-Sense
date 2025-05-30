@@ -143,7 +143,7 @@ function createGame() {
       if (readyCount === totalPlayers && totalPlayers > 0 && resultsDisplay.classList.contains('hidden') === false) {
         // All players are ready, start next round
         setTimeout(() => {
-          if (totalRounds === 'Infinite' || currentRoundNumber < totalRounds) {
+          if (totalRounds === 'Infinite' || currentRoundNumber <= totalRounds) {
             startNewRound();
           } else {
             showGameEnd();
