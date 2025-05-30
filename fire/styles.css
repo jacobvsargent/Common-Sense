@@ -240,6 +240,17 @@ h3 {
   background-color: #f8f9fa;
 }
 
+.host .leaderboard-table {
+  background-color: white !important;
+  color: black !important;
+}
+
+.host .leaderboard-table th,
+.leaderboard-table td {
+  background-color: white !important;
+  color: black !important;
+}
+
 /* Player Specific Styles */
 .player #join-screen {
   max-width: 500px;

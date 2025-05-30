@@ -177,20 +177,35 @@ function setupGameListeners() {
   // Listen for when results are ready (triggered by host)
   db.ref(`games/${gameId}/roundResult`).on('value', (snapshot) => {
     const roundResult = snapshot.val();
-    if (roundResult && answerSubmitted.classList.contains('hidden') === false) {
-      // Results are ready and we're currently on the "answer submitted" screen
-      // Get the answers and players to show results
-      Promise.all([
-        db.ref(`games/${gameId}/playerAnswers`).once('value'),
-        db.ref(`games/${gameId}/players`).once('value')
-      ]).then(([answersSnapshot, playersSnapshot]) => {
-        const answers = answersSnapshot.val() || {};
-        const players = playersSnapshot.val() || {};
-        
-        if (answers[playerId]) {
-          showPlayerResults(answers, players);
-        }
-      });
+    if (roundResult) {
+      // Update the player result header based on consensus status
+      if (roundResult.consensusStatus === "common") {
+        playerResultHeader.textContent = "That's Common Sense!";
+        playerResultHeader.className = "success";
+      } else if (roundResult.consensusStatus === "partial") {
+        playerResultHeader.textContent = "Partial Sense...";
+        playerResultHeader.className = "partial";
+      } else {
+        playerResultHeader.textContent = "Nonsensical!";
+        playerResultHeader.className = "failure";
+      }
+      
+      // Check if we're currently on the answer submitted screen
+      if (!answerSubmitted.classList.contains('hidden')) {
+        // Results are ready and we're currently on the "answer submitted" screen
+        // Get the answers and players to show results
+        Promise.all([
+          db.ref(`games/${gameId}/playerAnswers`).once('value'),
+          db.ref(`games/${gameId}/players`).once('value')
+        ]).then(([answersSnapshot, playersSnapshot]) => {
+          const answers = answersSnapshot.val() || {};
+          const players = playersSnapshot.val() || {};
+          
+          if (answers[playerId]) {
+            showPlayerResults(answers, players);
+          }
+        });
+      }
     }
   });
   
