@@ -499,7 +499,6 @@ function showGameEnd() {
   });
   
   let finalHTML = `
-    <h3>Final Standings</h3>
     <table class="leaderboard-table">
       <thead>
         <tr>
