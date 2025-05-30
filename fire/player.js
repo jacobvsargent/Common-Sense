@@ -36,8 +36,10 @@ let playerData = null;
 let currentRound = null;
 let gameSettings = {};
 
-// Join game
+// Event listeners
 joinGameBtn.addEventListener('click', joinGame);
+submitAnswer.addEventListener('click', submitPlayerAnswer);
+nextRoundBtn.addEventListener('click', readyForNextRound);
 
 function joinGame() {
   const name = nameInput.value.trim();
@@ -153,28 +155,14 @@ function setupGameListeners() {
       
       // Create form for answering
       createAnswerForm();
+      
+      // Reset next round button state
+      nextRoundBtn.classList.remove('hidden');
+      waitingForPlayers.classList.add('hidden');
     }
   });
   
   // Listen for round results
-  db.ref(`games/${gameId}/roundResult`).on('value', (snapshot) => {
-    const roundResult = snapshot.val();
-    if (roundResult) {
-      // Update the player result header based on consensus status
-      if (roundResult.consensusStatus === "common") {
-        playerResultHeader.textContent = "That's Common Sense!";
-        playerResultHeader.className = "success";
-      } else if (roundResult.consensusStatus === "partial") {
-        playerResultHeader.textContent = "Partial Sense...";
-        playerResultHeader.className = "partial";
-      } else {
-        playerResultHeader.textContent = "Nonsensical!";
-        playerResultHeader.className = "failure";
-      }
-    }
-  });
-  
-  // Listen for when results are ready (triggered by host)
   db.ref(`games/${gameId}/roundResult`).on('value', (snapshot) => {
     const roundResult = snapshot.val();
     if (roundResult) {
@@ -217,6 +205,10 @@ function setupGameListeners() {
       // This player is ready, show waiting message
       nextRoundBtn.classList.add('hidden');
       waitingForPlayers.classList.remove('hidden');
+    } else {
+      // This player is not ready, show the button
+      nextRoundBtn.classList.remove('hidden');
+      waitingForPlayers.classList.add('hidden');
     }
   });
 }
@@ -257,8 +249,6 @@ function createAnswerForm() {
 }
 
 // Submit answer
-submitAnswer.addEventListener('click', submitPlayerAnswer);
-
 function submitPlayerAnswer() {
   if (!currentRound || !playerId || !gameId) return;
   
@@ -299,6 +289,23 @@ function submitPlayerAnswer() {
     });
 }
 
+// Handle "Next Round" button click
+function readyForNextRound() {
+  if (!gameId || !playerId) return;
+  
+  // Mark this player as ready for next round
+  db.ref(`games/${gameId}/playerReadyForNext/${playerId}`).set(true)
+    .then(() => {
+      // Update UI immediately
+      nextRoundBtn.classList.add('hidden');
+      waitingForPlayers.classList.remove('hidden');
+    })
+    .catch((error) => {
+      console.error('Error marking player ready:', error);
+      alert('Error preparing for next round');
+    });
+}
+
 // Show player results
 function showPlayerResults(allAnswers, allPlayers) {
   // Hide other screens
@@ -326,18 +333,27 @@ function showPlayerResults(allAnswers, allPlayers) {
     finalMessage.innerHTML = '<h3>🏆 Final Results on Host Screen! 🏆</h3>';
     finalMessage.classList.remove('hidden');
   } else {
-    // Game continues - show next round button
-    nextRoundBtn.classList.remove('hidden');
-    waitingForPlayers.classList.add('hidden');
-    
-    // Hide final results message if it exists
+    // Game continues - show next round button (if player not already ready)
     const finalMessage = document.getElementById('final-results-message');
     if (finalMessage) {
       finalMessage.classList.add('hidden');
     }
+    
+    // Check if this player is already marked as ready
+    db.ref(`games/${gameId}/playerReadyForNext/${playerId}`).once('value', (snapshot) => {
+      if (snapshot.val()) {
+        // Already ready - show waiting message
+        nextRoundBtn.classList.add('hidden');
+        waitingForPlayers.classList.remove('hidden');
+      } else {
+        // Not ready yet - show button
+        nextRoundBtn.classList.remove('hidden');
+        waitingForPlayers.classList.add('hidden');
+      }
+    });
   }
   
-  // Show player's answers (existing code continues...)
+  // Show player's answers
   playerResults.innerHTML = '';
   const myAnswers = allAnswers[playerId] || {};
   
