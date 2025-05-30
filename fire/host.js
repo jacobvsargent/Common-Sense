@@ -5,6 +5,10 @@ let players = {};
 let currentRound = null;
 let playerAnswers = {};
 let playerScores = {}; // Track player scores across rounds
+let currentRoundNumber = 1;
+let totalRounds = 5;
+let difficulty = 'Medium';
+let playerReadyForNext = {}; // Track who is ready for next round
 
 // DOM Elements
 const createGameBtn = document.getElementById('create-game');
@@ -20,7 +24,46 @@ const playerStatusElement = document.getElementById('player-status');
 const resultsDisplay = document.getElementById('results-display');
 const resultHeaderElement = document.getElementById('result-header');
 const leaderboardElement = document.getElementById('leaderboard');
-const nextRoundBtn = document.getElementById('next-round');
+const gameEndElement = document.getElementById('game-end');
+const finalLeaderboardElement = document.getElementById('final-leaderboard');
+const newGameBtn = document.getElementById('new-game');
+
+// Setting elements
+const roundsSlider = document.getElementById('rounds-slider');
+const roundsValue = document.getElementById('rounds-value');
+const difficultySlider = document.getElementById('difficulty-slider');
+const difficultyValue = document.getElementById('difficulty-value');
+const displayRounds = document.getElementById('display-rounds');
+const displayDifficulty = document.getElementById('display-difficulty');
+const currentRoundNumberElement = document.getElementById('current-round-number');
+const totalRoundsDisplayElement = document.getElementById('total-rounds-display');
+
+// Next round status elements
+const nextRoundStatus = document.getElementById('next-round-status');
+const playersNotReadyElement = document.getElementById('players-not-ready');
+const playerReadyStatusElement = document.getElementById('player-ready-status');
+
+// Settings sliders
+const roundsOptions = [1, 3, 5, 7, 9, 'Infinite'];
+const difficultyOptions = ['Easy', 'Medium', 'Hard'];
+
+roundsSlider.addEventListener('input', function() {
+  const value = roundsOptions[parseInt(this.value)];
+  roundsValue.textContent = value;
+  totalRounds = value;
+});
+
+difficultySlider.addEventListener('input', function() {
+  const value = difficultyOptions[parseInt(this.value)];
+  difficultyValue.textContent = value;
+  difficulty = value;
+});
+
+// Initialize slider values
+roundsValue.textContent = roundsOptions[parseInt(roundsSlider.value)];
+difficultyValue.textContent = difficultyOptions[parseInt(difficultySlider.value)];
+totalRounds = roundsOptions[parseInt(roundsSlider.value)];
+difficulty = difficultyOptions[parseInt(difficultySlider.value)];
 
 // Create a new game
 createGameBtn.addEventListener('click', createGame);
@@ -37,11 +80,18 @@ function createGame() {
     players: {},
     currentRound: null,
     playerScores: {}, // Initialize scores in Firebase
+    totalRounds: totalRounds,
+    difficulty: difficulty,
+    currentRoundNumber: 1,
+    playerReadyForNext: {},
     created: firebase.database.ServerValue.TIMESTAMP
   }).then(() => {
     roomCodeElement.textContent = gameId;
+    displayRounds.textContent = totalRounds;
+    displayDifficulty.textContent = difficulty;
     roomDisplay.classList.remove('hidden');
     createGameBtn.classList.add('hidden');
+    document.getElementById('game-settings').classList.add('hidden');
     
     // Listen for player joins
     gameRef.child('players').on('value', (snapshot) => {
@@ -80,6 +130,35 @@ function createGame() {
     gameRef.child('playerScores').on('value', (snapshot) => {
       playerScores = snapshot.val() || {};
     });
+    
+    // Listen for player ready status
+    gameRef.child('playerReadyForNext').on('value', (snapshot) => {
+      playerReadyForNext = snapshot.val() || {};
+      updateNextRoundStatus();
+      
+      // Check if all players are ready for next round
+      const readyCount = Object.keys(playerReadyForNext).length;
+      const totalPlayers = Object.keys(players).length;
+      
+      if (readyCount === totalPlayers && totalPlayers > 0 && resultsDisplay.classList.contains('hidden') === false) {
+        // All players are ready, start next round
+        setTimeout(() => {
+          if (totalRounds === 'Infinite' || currentRoundNumber < totalRounds) {
+            startNewRound();
+          } else {
+            showGameEnd();
+          }
+        }, 1000);
+      }
+    });
+    
+    // Listen for current round number
+    gameRef.child('currentRoundNumber').on('value', (snapshot) => {
+      currentRoundNumber = snapshot.val() || 1;
+      currentRoundNumberElement.textContent = currentRoundNumber;
+    });
+    
+    totalRoundsDisplayElement.textContent = totalRounds;
   });
 }
 
@@ -110,8 +189,10 @@ function startGame() {
 
 // Start a new round
 function startNewRound() {
-  // Clear previous answers
+  // Clear previous answers and ready states
   db.ref(`games/${gameId}/playerAnswers`).remove();
+  db.ref(`games/${gameId}/playerReadyForNext`).remove();
+  playerReadyForNext = {};
   
   // Generate a random question
   const category = weightedRandom(commonSenseData.categories);
@@ -127,16 +208,20 @@ function startNewRound() {
   };
   
   // Update Firebase
-  db.ref(`games/${gameId}/currentRound`).set(currentRound)
-    .then(() => {
-      // Display the question
-      currentQuestionElement.textContent = currentRound.question;
-      resultsDisplay.classList.add('hidden');
-      playerStatusElement.parentElement.classList.remove('hidden'); // Show waiting status
-      
-      // Reset player status
-      updatePlayerStatus();
-    });
+  Promise.all([
+    db.ref(`games/${gameId}/currentRound`).set(currentRound),
+    db.ref(`games/${gameId}/currentRoundNumber`).set(currentRoundNumber)
+  ]).then(() => {
+    // Display the question
+    currentQuestionElement.textContent = currentRound.question;
+    resultsDisplay.classList.add('hidden');
+    gameEndElement.classList.add('hidden');
+    nextRoundStatus.classList.add('hidden');
+    playerStatusElement.parentElement.classList.remove('hidden'); // Show waiting status
+    
+    // Reset player status
+    updatePlayerStatus();
+  });
 }
 
 // Calculate which players get points for this round
@@ -230,6 +315,18 @@ function showResults() {
   
   // Show results display
   resultsDisplay.classList.remove('hidden');
+  
+  // Check if this is the last round
+  if (totalRounds !== 'Infinite' && currentRoundNumber >= totalRounds) {
+    // Don't show next round status, game will end
+    nextRoundStatus.classList.add('hidden');
+  } else {
+    // Show next round status after a delay
+    setTimeout(() => {
+      nextRoundStatus.classList.remove('hidden');
+      updateNextRoundStatus();
+    }, 2000);
+  }
 }
 
 // Update the integrated leaderboard
@@ -295,8 +392,81 @@ function updateIntegratedLeaderboard(roundPoints) {
   leaderboardElement.innerHTML = leaderboardHTML;
 }
 
-// Next round button
-nextRoundBtn.addEventListener('click', startNewRound);
+// Update next round status
+function updateNextRoundStatus() {
+  const totalPlayers = Object.keys(players).length;
+  const readyPlayers = Object.keys(playerReadyForNext).length;
+  const notReadyCount = totalPlayers - readyPlayers;
+  
+  playersNotReadyElement.textContent = notReadyCount;
+  
+  // Update player ready status list
+  playerReadyStatusElement.innerHTML = '';
+  
+  for (const playerId in players) {
+    const playerElement = document.createElement('li');
+    playerElement.className = 'player-status-item';
+    
+    if (playerReadyForNext[playerId]) {
+      playerElement.classList.add('answered');
+      playerElement.innerHTML = `<span>${players[playerId].name} ✓</span>`;
+    } else {
+      playerElement.innerHTML = `<span>${players[playerId].name} ...</span>`;
+    }
+    
+    playerReadyStatusElement.appendChild(playerElement);
+  }
+}
+
+// Show game end screen
+function showGameEnd() {
+  resultsDisplay.classList.add('hidden');
+  gameEndElement.classList.remove('hidden');
+  
+  // Create final leaderboard
+  const sortedPlayers = Object.keys(playerScores).sort((a, b) => {
+    return playerScores[b] - playerScores[a];
+  });
+  
+  let finalHTML = `
+    <h3>Final Standings</h3>
+    <table class="leaderboard-table">
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Player</th>
+          <th>Final Score</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+  
+  sortedPlayers.forEach((playerId, index) => {
+    const playerName = players[playerId] ? players[playerId].name : 'Unknown';
+    const playerScore = playerScores[playerId] || 0;
+    const rank = index + 1;
+    
+    let rankClass = '';
+    if (rank === 1) rankClass = 'first-place';
+    else if (rank === 2) rankClass = 'second-place';
+    else if (rank === 3) rankClass = 'third-place';
+    
+    finalHTML += `
+      <tr class="${rankClass}">
+        <td>${rank}</td>
+        <td>${playerName}</td>
+        <td>${playerScore}</td>
+      </tr>`;
+  });
+  
+  finalHTML += '</tbody></table>';
+  finalLeaderboardElement.innerHTML = finalHTML;
+}
+
+// New game button
+newGameBtn.addEventListener('click', () => {
+  location.reload();
+});
 
 // Helper Functions
 function generateRoomCode() {

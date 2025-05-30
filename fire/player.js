@@ -6,6 +6,7 @@ const waitingScreen = document.getElementById('waiting-screen');
 const gameScreen = document.getElementById('game-screen');
 const answerSubmitted = document.getElementById('answer-submitted');
 const resultsScreen = document.getElementById('results-screen');
+const gameEndScreen = document.getElementById('game-end-screen');
 const nameInput = document.getElementById('name-input');
 const roomInput = document.getElementById('room-input');
 const joinGameBtn = document.getElementById('join-game');
@@ -17,12 +18,23 @@ const answerForm = document.getElementById('answer-form');
 const submitAnswer = document.getElementById('submit-answer');
 const playerResultHeader = document.getElementById('player-result-header');
 const playerResults = document.getElementById('player-results');
+const nextRoundBtn = document.getElementById('next-round-btn');
+const waitingForPlayers = document.getElementById('waiting-for-players');
+
+// Game setting display elements
+const gameSettingsDisplay = document.getElementById('game-settings-display');
+const playerRounds = document.getElementById('player-rounds');
+const playerDifficulty = document.getElementById('player-difficulty');
+const playerCurrentRound = document.getElementById('player-current-round');
+const playerTotalRounds = document.getElementById('player-total-rounds');
+const playerFinalResults = document.getElementById('player-final-results');
 
 // Game variables
 let gameId = null;
 let playerId = null;
 let playerData = null;
 let currentRound = null;
+let gameSettings = {};
 
 // Join game
 joinGameBtn.addEventListener('click', joinGame);
@@ -96,6 +108,35 @@ function setupGameListeners() {
     }
   });
   
+  // Listen for game settings (rounds and difficulty)
+  db.ref(`games/${gameId}`).on('value', (snapshot) => {
+    const gameData = snapshot.val();
+    if (gameData) {
+      gameSettings = gameData;
+      
+      // Update game settings display in waiting screen
+      if (gameData.totalRounds && gameData.difficulty) {
+        playerRounds.textContent = gameData.totalRounds;
+        playerDifficulty.textContent = gameData.difficulty;
+        playerTotalRounds.textContent = gameData.totalRounds;
+        gameSettingsDisplay.classList.remove('hidden');
+      }
+      
+      // Update current round number
+      if (gameData.currentRoundNumber) {
+        playerCurrentRound.textContent = gameData.currentRoundNumber;
+      }
+      
+      // Check if game has ended
+      if (gameData.totalRounds !== 'Infinite' && 
+          gameData.currentRoundNumber && 
+          gameData.currentRoundNumber > gameData.totalRounds &&
+          gameData.playerScores) {
+        showGameEnd(gameData.playerScores, gameData.players);
+      }
+    }
+  });
+  
   // Listen for current round
   db.ref(`games/${gameId}/currentRound`).on('value', (snapshot) => {
     currentRound = snapshot.val();
@@ -105,6 +146,7 @@ function setupGameListeners() {
       gameScreen.classList.remove('hidden');
       answerSubmitted.classList.add('hidden');
       resultsScreen.classList.add('hidden');
+      gameEndScreen.classList.add('hidden');
       
       // Display question
       playerQuestion.textContent = currentRound.question;
@@ -132,19 +174,32 @@ function setupGameListeners() {
     }
   });
   
-  let gameSnapshot = {};
-  db.ref(`games/${gameId}`).on('value', (snapshot) => {
-    gameSnapshot = snapshot.val() || {};
+  // Listen for player answers to know when results are ready
+  db.ref(`games/${gameId}/playerAnswers`).on('value', (snapshot) => {
+    const answers = snapshot.val() || {};
     
-    // Listen for player answers to know when results are ready
-    const answers = gameSnapshot.playerAnswers || {};
-    const players = gameSnapshot.players || {};
+    if (answers[playerId]) {
+      // Get current game state for player count check
+      db.ref(`games/${gameId}/players`).once('value', (playersSnapshot) => {
+        const players = playersSnapshot.val() || {};
+        
+        // If all players have answered, show results
+        if (Object.keys(answers).length === Object.keys(players).length &&
+            Object.keys(players).length > 0) {
+          showPlayerResults(answers, players);
+        }
+      });
+    }
+  });
+  
+  // Listen for player ready status to update UI
+  db.ref(`games/${gameId}/playerReadyForNext`).on('value', (snapshot) => {
+    const readyPlayers = snapshot.val() || {};
     
-    // If all players have answered, show results
-    if (Object.keys(answers).length === Object.keys(players).length &&
-        Object.keys(players).length > 0 &&
-        answers[playerId]) {
-      showPlayerResults(answers, players);
+    if (readyPlayers[playerId]) {
+      // This player is ready, show waiting message
+      nextRoundBtn.classList.add('hidden');
+      waitingForPlayers.classList.remove('hidden');
     }
   });
 }
@@ -234,6 +289,10 @@ function showPlayerResults(allAnswers, allPlayers) {
   answerSubmitted.classList.add('hidden');
   resultsScreen.classList.remove('hidden');
   
+  // Reset next round button state
+  nextRoundBtn.classList.remove('hidden');
+  waitingForPlayers.classList.add('hidden');
+  
   // Show player's answers
   playerResults.innerHTML = '';
   const myAnswers = allAnswers[playerId] || {};
@@ -273,6 +332,73 @@ function showPlayerResults(allAnswers, allPlayers) {
     resultItem.textContent = `${sense}: ${myAnswers[sense]}${matchText}`;
     playerResults.appendChild(resultItem);
   }
+}
+
+// Handle next round button
+nextRoundBtn.addEventListener('click', () => {
+  // Mark this player as ready for next round
+  db.ref(`games/${gameId}/playerReadyForNext/${playerId}`).set(true)
+    .then(() => {
+      nextRoundBtn.classList.add('hidden');
+      waitingForPlayers.classList.remove('hidden');
+    })
+    .catch((error) => {
+      console.error('Error marking ready for next round:', error);
+    });
+});
+
+// Show game end screen
+function showGameEnd(playerScores, allPlayers) {
+  // Hide other screens
+  gameScreen.classList.add('hidden');
+  answerSubmitted.classList.add('hidden');
+  resultsScreen.classList.add('hidden');
+  gameEndScreen.classList.remove('hidden');
+  
+  // Create final leaderboard
+  const sortedPlayers = Object.keys(playerScores || {}).sort((a, b) => {
+    return (playerScores[b] || 0) - (playerScores[a] || 0);
+  });
+  
+  let finalHTML = `
+    <h3>Final Standings</h3>
+    <table class="leaderboard-table">
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Player</th>
+          <th>Final Score</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+  
+  sortedPlayers.forEach((pid, index) => {
+    const playerName = allPlayers && allPlayers[pid] ? allPlayers[pid].name : 'Unknown';
+    const playerScore = playerScores[pid] || 0;
+    const rank = index + 1;
+    
+    let rankClass = '';
+    if (rank === 1) rankClass = 'first-place';
+    else if (rank === 2) rankClass = 'second-place';
+    else if (rank === 3) rankClass = 'third-place';
+    
+    // Highlight current player
+    let playerClass = '';
+    if (pid === playerId) {
+      playerClass = 'current-player';
+    }
+    
+    finalHTML += `
+      <tr class="${rankClass} ${playerClass}">
+        <td>${rank}</td>
+        <td>${playerName}${pid === playerId ? ' (You)' : ''}</td>
+        <td>${playerScore}</td>
+      </tr>`;
+  });
+  
+  finalHTML += '</tbody></table>';
+  playerFinalResults.innerHTML = finalHTML;
 }
 
 // Helper functions

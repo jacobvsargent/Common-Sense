@@ -35,9 +35,16 @@
       <h2>Waiting for Host to Start</h2>
       <p>Room Code: <span id="player-room-code" class="highlight"></span></p>
       <p>You are: <span id="player-name" class="highlight"></span></p>
+      <div id="game-settings-display" class="hidden">
+        <p>Rounds: <span id="player-rounds" class="highlight"></span></p>
+        <p>Difficulty: <span id="player-difficulty" class="highlight"></span></p>
+      </div>
     </div>
 
     <div id="game-screen" class="hidden">
+      <div id="round-info">
+        <h3>Round <span id="player-current-round">1</span> of <span id="player-total-rounds">5</span></h3>
+      </div>
       <h2 id="player-question" class="question-text"></h2>
       <div id="answer-form"></div>
       <button id="submit-answer" class="btn-primary">Lock In Answer</button>
@@ -51,7 +58,16 @@
     <div id="results-screen" class="hidden">
       <h2 id="player-result-header"></h2>
       <div id="player-results"></div>
-      <p>Waiting for next round...</p>
+      <div id="next-round-section">
+        <button id="next-round-btn" class="btn-primary">Next Round</button>
+        <p id="waiting-for-players" class="hidden">Waiting for all players...</p>
+      </div>
+    </div>
+
+    <div id="game-end-screen" class="hidden">
+      <h2>Game Over!</h2>
+      <div id="player-final-results"></div>
+      <p>Thanks for playing!</p>
     </div>
   </div>
 

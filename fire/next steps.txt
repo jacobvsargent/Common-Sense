@@ -1,11 +1,15 @@
+5.30 goals
+-for now, when you click host, you should have to type in the number of rounds and difficulty (easy, med, hard) but do not implement difficulty functionality yet
+-instead of 'next round being on the host computer' make it so it's everyone vote sort of deal
+
+
+
+
 > all players have "Next Round" button on their phones
 > instructions on index.html
 > copyright yadda yadda
-> partial sense page?
 > describe mode
-> set number of rounds? 5? thematic? wow
 > point jacobsargent.com to new spot
 > url for game?
-> background
 > timer
 > players can show up as objects
