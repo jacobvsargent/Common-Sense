@@ -196,9 +196,9 @@ function startNewRound() {
   db.ref(`games/${gameId}/playerReadyForNext`).remove();
   playerReadyForNext = {};
   
-  // Generate a random question
-  const category = weightedRandom(commonSenseData.categories);
-  const modifier = weightedRandom(commonSenseData.modifiers);
+  // Generate a random question based on difficulty
+  const category = getFilteredCategory();
+  const modifier = getFilteredModifier();
   const object = weightedRandom(commonSenseData.objects);
   
   const senses = getSensesFromCategory(category);
@@ -227,6 +227,47 @@ function startNewRound() {
     // Increment round number for next time (AFTER setting it to Firebase)
     currentRoundNumber++;
   });
+}
+
+// Filter categories based on difficulty
+function getFilteredCategory() {
+  let allowedCategories = [];
+  
+  if (difficulty === 'Easy') {
+    // Only single sense categories
+    allowedCategories = commonSenseData.categories.filter(category => {
+      const senses = getSensesFromCategory(category);
+      return senses.length === 1;
+    });
+  } else if (difficulty === 'Medium') {
+    // Single and double sense categories only
+    allowedCategories = commonSenseData.categories.filter(category => {
+      const senses = getSensesFromCategory(category);
+      return senses.length <= 2;
+    });
+  } else {
+    // Hard - all categories allowed
+    allowedCategories = commonSenseData.categories;
+  }
+  
+  return weightedRandom(allowedCategories);
+}
+
+// Filter modifiers based on difficulty
+function getFilteredModifier() {
+  let allowedModifiers = [];
+  
+  if (difficulty === 'Easy' || difficulty === 'Medium') {
+    // Exclude "SECOND MOST" modifier
+    allowedModifiers = commonSenseData.modifiers.filter(modifier => {
+      return !modifier.text.includes('SECOND MOST');
+    });
+  } else {
+    // Hard - all modifiers allowed
+    allowedModifiers = commonSenseData.modifiers;
+  }
+  
+  return weightedRandom(allowedModifiers);
 }
 
 // Calculate which players get points for this round
