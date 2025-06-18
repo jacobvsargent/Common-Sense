@@ -9,6 +9,7 @@ let currentRoundNumber = 1;
 let totalRounds = 5;
 let difficulty = 'Medium';
 let playerReadyForNext = {}; // Track who is ready for next round
+let gameStartTime = null;
 
 // DOM Elements
 const createGameBtn = document.getElementById('create-game');
@@ -167,7 +168,23 @@ function createGame() {
 // Start the game
 startGameBtn.addEventListener('click', startGame);
 
+function trackGameAbandonment() {
+  // Track when host leaves
+  window.addEventListener('beforeunload', function(e) {
+    // Only record if game is active
+    if (gameId && 
+        Object.keys(players).length > 0 && 
+        !setupScreen.classList.contains('hidden') === false &&
+        gameEndElement.classList.contains('hidden')) {
+      
+      // Record the abandonment
+      recordGameAbandonment(gameId, players, playerScores, totalRounds, currentRoundNumber - 1, difficulty, gameStartTime);
+    }
+  });
+}
+
 function startGame() {
+  gameStartTime = Date.now();
   if (Object.keys(players).length < 2) {
     alert('You need at least 2 players to start the game!');
     return;
@@ -490,6 +507,9 @@ function updateNextRoundStatus() {
 
 // Show game end screen
 function showGameEnd() {
+
+  recordGameCompletion(gameId, players, playerScores, totalRounds, currentRoundNumber - 1, difficulty, gameStartTime);
+
   resultsDisplay.classList.add('hidden');
   gameEndElement.classList.remove('hidden');
   
