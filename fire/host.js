@@ -515,7 +515,6 @@ function showGameEnd() {
   });
   
   let finalHTML = `
-    <h3>Final Standings</h3>
     <table class="leaderboard-table">
       <thead>
         <tr>
@@ -547,6 +546,14 @@ function showGameEnd() {
   
   finalHTML += '</tbody></table>';
   finalLeaderboardElement.innerHTML = finalHTML;
+
+  const questionDisplayBackup = document.querySelector('.question-display');
+  if (questionDisplayBackup) {
+    questionDisplayBackup.classList.add('hidden');
+  }
+
+  // Create a new game
+  newGameBtn.addEventListener('click', createGame);
 }
 
 // Helper Functions
